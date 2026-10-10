@@ -1,0 +1,28 @@
+; Benchy Racers native Windows game
+config_version=5
+
+[application]
+config/name="Benchy Racers"
+config/version="0.4.1"
+config/icon="res://assets/icon.png"
+run/main_scene="res://main.tscn"
+config/features=PackedStringArray("4.6", "Forward Plus")
+
+[display]
+window/size/viewport_width=1440
+window/size/viewport_height=900
+window/size/window_width_override=1280
+window/size/window_height_override=800
+window/size/mode=3
+window/stretch/mode="canvas_items"
+window/handheld/orientation=0
+
+[rendering]
+renderer/rendering_method="forward_plus"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+anti_aliasing/quality/msaa_3d=2
+environment/defaults/default_clear_color=Color(0.015, 0.04, 0.08, 1)
+
+[audio]
+driver/enable_input=false

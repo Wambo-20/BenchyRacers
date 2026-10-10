@@ -1,0 +1,135 @@
+BENCHY RACERS — spielbare Windows-Version 0.4.1
+============================================
+
+INSTALLATION
+BenchyRacers-Setup.exe starten und Installieren wählen.
+Das Spiel wird für deinen Windows-Benutzer installiert, ohne Adminrechte.
+Start über Desktop oder Startmenü. Deinstallation über Windows > Apps.
+Alternativ das portable ZIP entpacken und BenchyRacers.exe starten.
+Windows 10/11, 64 Bit. Godot muss NICHT installiert werden.
+
+SPIEL
+Drei Karten: Sonnendeck, Frostfjord und Neonhafen.
+Jeweils drei Runden; alle nummerierten Tore nacheinander passieren.
+Die grüne Markierung zeigt das nächste Tor. Die Minikarte zeigt alle Fahrer.
+Bis zu acht menschliche Spieler; freie Plätze bis vier Fahrer füllen Bots.
+Original-Benchy mit zehn auswählbaren Filamentfarben.
+
+STEUERUNG
+W / Pfeil hoch           Gas
+S / Pfeil runter         Bremse / rückwärts
+A, D / Pfeile links/rechts   Lenken
+Shift                    Aufladbaren Boost benutzen
+Leertaste oder E         Item einsetzen
+R                        Zum letzten passierten Tor zurücksetzen
+Esc                      Pause / Menü
+M                        Ton ein/aus
+Gamepad: linker Stick lenkt, RT / A gibt Gas, LT bremst.
+LB aktiviert Boost, X setzt Item ein, Y setzt zurück, Start öffnet Menü.
+Grafik & Bildschirm im Hauptmenü oder Pausemenü öffnen.
+Online pausiert das Menü das Rennen nicht.
+
+ITEMS UND MAKERCOINS
+Goldene Makercoins: maximal zehn. Wird dein Benchy von einer Spule getroffen,
+verlierst du ALLE Makercoins und wirst kurz ausgebremst.
+Filamentrollen mit Fragezeichen liefern ein zufälliges Item:
+- Lenkspule: sucht einen Fahrer vor dir und verfolgt ihn.
+- Turbo-Filament: 3,5 Sekunden zusätzlicher Boost.
+- Schutzschild: hält 7,5 Sekunden und blockiert einen Treffer samt Coinverlust.
+Es kann jeweils ein Item gehalten werden. Pickups erscheinen nach kurzer Zeit neu.
+Hintere Positionen haben höhere Chancen auf offensive Items.
+
+ONLINE MIT FREUNDEN
+1. Alle installieren oder entpacken dieselbe Version.
+2. Gastgeber wählt Strecke und Filament, trägt seinen Namen ein und wählt
+   Online hosten. Die Lobby bleibt offen, bis er Rennen starten klickt.
+3. UPnP versucht automatisch eine zeitlich begrenzte UDP-Routerfreigabe.
+   Bei Erfolg zeigt die Lobby die öffentliche Internetadresse und den Port.
+4. Freunde tragen diese Adresse in IP / Hostname ein und klicken Beitreten.
+5. Gastgeber startet das Rennen, sobald alle in der Lobby sichtbar sind.
+6. Nach dem Zieleinlauf kann der Gastgeber zurück zur Lobby und neu starten.
+
+Wenn UPnP scheitert: UDP-Port 27844 am Router an den Gastgeber-PC weiterleiten.
+Dieser Port kann im Hauptmenü geändert werden. Bei allen Teilnehmern denselben
+Port verwenden, oder als Adresse IP:Port eingeben.
+Windows-Firewall bei Nachfrage für das Spiel und den verwendeten Netzwerktyp
+freigeben. Bei CGNAT / DS-Lite ist direkte Internetverbindung oft nicht möglich:
+ein gemeinsames virtuelles Netzwerk (z.B. ein vorhandenes VPN) verwenden und
+über dessen IP verbinden. Auch LAN-Adressen funktionieren.
+Dies ist direkte Host-Client-Verbindung, ohne Matchmaking oder zentralen Relay.
+Ein laufendes Rennen kann nicht nachträglich betreten werden.
+Verlässt ein Gast das Rennen, übernimmt ein Bot. Verlässt der Gastgeber,
+endet die Verbindung. Es gibt keine Hostmigration und keinen Accounts-Zwang.
+
+GRAFIK UND PHYSIK
+Die normale Version nutzt Vulkan / Direct3D mit Wasserwellen, Reflexionen,
+weicher Beleuchtung, atmosphärischem Himmel, Gischt und Kamerabewegung.
+Eine aktuelle dedizierte Grafikkarte und aktuelle Treiber sind empfohlen.
+Bei Grafikproblemen den Startmenüeintrag Benchy Racers – Kompatibel oder die
+Datei Kompatibel-starten.cmd verwenden. Das nutzt OpenGL mit reduzierten Effekten.
+Die Physik ist für Arcade-Rennen ausgelegt: echter integrierter Auftrieb an
+vier Rumpfpunkten, 34 cm nomineller Tiefgang, Schwerkraft, vertikales Nachfedern,
+wellenabhängiges Rollen und Stampfen, träge seitliche Bewegung, Bremsen,
+Drift und Boots-Kollisionen. Es ist keine wissenschaftliche Strömungssimulation.
+Dies ist eine erste spielbare Version, kein vollständig balanciertes finales
+Spiel. Es gibt noch keine öffentlichen Lobbys oder Ranglisten.
+Drei eigene elektronische Musikstücke begleiten die Rennen. Die Musiklautstärke
+kann im Pausemenü eingestellt werden; M schaltet den gesamten Ton ein/aus.
+
+DATEIEN UND EINSTELLUNGEN
+Benutzereinstellungen werden unter
+%APPDATA%\Godot\app_userdata\Benchy Racers\settings.cfg gespeichert.
+Die Deinstallation erhält diese Einstellungen.
+Der Quellcode liegt zusätzlich im ZIP BenchyRacers-Quellcode.zip.
+
+CREDITS
+Original #3DBenchy: Daniel Norée / Creative Tools.
+Originalmodell: https://github.com/CreativeTools/3DBenchy
+Aktuelle Lizenz: CC0, https://www.3dbenchy.com/license/
+Für das Spiel wurde die Geometrie vereinfacht und in ein Spielformat konvertiert.
+Godot Engine 4.6: MIT-Lizenz, https://godotengine.org/license/
+Engine-Hinweise: https://godotengine.org/license/#thirdparty
+Filamentnamen sind Marken der jeweiligen Hersteller; Farben sind visuelle
+Annäherungen. Dieses Spiel ist kein offizielles Produkt der Markenhersteller.
+
+NEU IN VERSION 0.2
+Sonnendeck: bewachsene Küsteninsel und vorgelagerte Inseln, hunderte animierte
+Palmen, Unterwuchs, Sandstrände, Felsen, Strandhütten und Holzsteg.
+Strukturierte Naturmaterialien, flaches Küstenwasser und bewegte Brandung.
+Galaxy Black besitzt kleine glitzernde Partikel, die mit dem Blickwinkel funkeln.
+
+NATURTEXTUREN UND MUSIK
+Naturtexturen von Poly Haven, CC0:
+https://polyhaven.com/a/coast_sand_01
+https://polyhaven.com/a/grass_ground
+https://polyhaven.com/a/rock_boulder_dry
+https://polyhaven.com/a/bark_brown_02
+Die drei Musikstücke und der Motor-Sound wurden eigens für dieses Spiel erzeugt.
+
+NEU IN VERSION 0.3
+Das Spiel startet standardmäßig im randlosen Vollbild. Unter Grafik & Bildschirm
+können Fenstermodus, Renderauflösung, vier Grafikqualitäten, VSync, Bildratenlimit,
+Kantenglättung und einzelne Effekte eingestellt werden. Übernehmen speichert
+die Wahl; Abbrechen verwirft Änderungen. Standard setzt die Auswahl zurück.
+Eine gespeicherte Fensterwahl wird auch beim nächsten Start verwendet.
+
+NEU IN VERSION 0.4
+Sonnendeck: klares Küstenwasser mit sichtbarem Meeresboden, Lichtmustern,
+bewegten Wellen und Reflexionen. Feinere Wassergeometrie und Wellen aus
+verschiedenen Richtungen verhindern das sichtbare rechteckige Raster.
+Die Heckwelle folgt der tatsächlich gefahrenen Kurve, bewegt sich mit dem
+Wasser und löst sich langsam auf, auch wenn das Boot stehen bleibt.
+Mehr tropische Vegetation, gescannte Küstenfelsen, Bäume und Farne, höhere
+Felsformationen und eine näher am Boot geführte Kamera.
+Die hohe Grafikqualität nutzt standardmäßig vierfache Kantenglättung.
+
+GESCANNTE NATURMODELLE
+Poly Haven, CC0; für das Spiel vereinfacht und angepasst:
+https://polyhaven.com/a/boulder_01
+https://polyhaven.com/a/coast_rocks_02
+https://polyhaven.com/a/island_tree_02
+https://polyhaven.com/a/fern_02
+
+NEU IN VERSION 0.4.1
+Heckspur korrigiert: mittiger Schaum direkt hinter dem Heck, weniger seitliche
+Auffächerung und feste Weltkoordinaten unabhängig von der Bootsdrehung.
