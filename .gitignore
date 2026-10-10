@@ -1,0 +1,15 @@
+# Godot imports and local cache
+.godot/
+# Generated binaries and installers
+outputs/
+build/
+work/tools/raw-nature/
+work/tools/payload.zip
+work/tools/Godot*.exe
+work/tools/windows_release_x86_64.exe
+work/tools/rcedit*.exe
+# Temporary files
+__pycache__/
+*.log
+*.tmp
+.DS_Store
