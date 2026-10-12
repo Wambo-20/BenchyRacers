@@ -1,53 +1,42 @@
 # Benchy Racers
 
-Installierbares 3D-Wasser-Rennspiel für Windows mit dem originalen #3DBenchy. Aktueller Stand: **0.4.1**, spielbarer Prototyp.
+Installierbares 3D-Wasser-Rennspiel für Windows mit dem originalen #3DBenchy. Aktuelle Version: **1.5.0 – Unreal Engine**.
 
-## Spielen
+## Download und Spielen
 
-Windows-Installer und portable ZIP stehen unter [Releases](../../releases). Für das fertige Spiel muss Godot nicht installiert werden. Windows 10/11, 64 Bit; eine aktuelle Grafikkarte wird empfohlen. Bei Grafikproblemen den Kompatibilitätsstart mit OpenGL verwenden.
+Den [Windows-Installer](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.5.0/BenchyRacers-Unreal-Setup.exe) herunterladen und ausführen. Alternativ die [Portable-ZIP](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.5.0/BenchyRacers-Unreal-Portable.zip) vollständig entpacken und `BenchyRacers.exe` starten. Windows 64 Bit und eine DirectX-12-Grafikkarte sind erforderlich. Unreal Engine, Epic Games Launcher und Fab-Packs werden zum Spielen nicht benötigt. Der Installer aktualisiert die separate Unreal-Ausgabe.
 
-- Drei Strecken: Sonnendeck, Frostfjord und Neonhafen.
-- Online-Rennen über direkte Host-Client-Verbindung, bis zu acht Spieler; Bots füllen freie Plätze bis vier Fahrer.
-- Zehn Filamentfarben, Galaxy-Glitzer, Auftrieb an vier Rumpfpunkten, Kollisionen, Boost und Items.
-- Makercoins und Filamentrollen zum Einsammeln.
-- Grafikmenü, Vollbild, Gamepad und drei eigene elektronische Musikstücke.
+Die [Release-Seite](https://github.com/Wambo-20/BenchyRacers/releases/tag/v1.5.0) enthält außerdem das Unreal-Projektarchiv und SHA256-Prüfsummen.
 
-**Steuerung:** W/A/S/D oder Pfeiltasten, Shift für Boost, Leertaste/E für Items, R zum Zurücksetzen und Esc für das Menü.
+- Drei unterschiedliche Welten: **Sonnendeck**, **Kupferhafen** und der verschneite **Frostfjord**, mit Flüssen, Kanälen, gescannten Felsen und Vegetation.
+- Einzelrennen gegen fünf Gegner; private Rennen mit bis zu acht Menschen.
+- Sechs Filamentfarben mit sichtbaren Druckschichten, funkelndem Prusament Galaxy Black und leuchtendem Prusament Glow in the Dark.
+- Filamentrollen mit Standard Nozzle, Lenknozzle, Turbo oder Schild; Makercoins und Boost.
+- Seitliches Menü mit großer Benchy-Vorschau, Kartenpanorama, Druckanimation, Grafikoptionen und Musik.
+- Persönlicher Zieleinlauf mit automatischer Weiterfahrt und Live-Ergebnissen. Das Rennen läuft weiter, bis alle fertig oder ausgeschieden sind.
 
-Für Online-Rennen hostet ein Spieler und die anderen verbinden sich über seine IP. UDP-Port 27844 muss erreichbar sein. UPnP wird versucht; bei CGNAT kann ein gemeinsames virtuelles Netzwerk nötig sein. Es gibt noch kein Matchmaking oder Relay. Details: [Spielanleitung](docs/LIESMICH.txt).
+**Steuerung:** W/A/S/D oder Pfeile, Shift für Boost, Leertaste für Items, S + Leertaste für den Rückwärtsschuss, R zum letzten Kontrollpunkt, G für Grafik/Ton, F11 für Vollbild und Esc für das Menü. Gamepad wird unterstützt.
 
-## Vorschau aus dem Spiel
+## Mit Freunden spielen
 
-Die erhöhte Kamera in dieser Aufnahme dient zur Kontrolle der Heckspur.
+Alle verwenden Version 1.5.0. Ein Spieler erstellt eine Online-Lobby; die anderen verbinden sich mit seiner erreichbaren IP-Adresse oder seinem Hostnamen. **UDP-Port 7777** muss erreichbar sein. Im Heimnetz reicht die lokale Host-IP; über das Internet gegebenenfalls Router-/Firewallfreigabe oder ein gemeinsames privates VPN verwenden. Es gibt keine öffentliche Spielersuche, Relay-Server oder automatische Routerfreigabe.
 
-![Heckspur im Spiel](docs/Heckspur.gif)
+Details stehen in der [aktuellen Spielanleitung](unreal/LIESMICH.md). Zwei getrennte lokale Spielprozesse wurden geprüft; Verbindungen über fremde Router sind noch nicht durchgängig getestet.
 
-## Projekt öffnen und exportieren
+## Quellcode und ältere Ausgabe
 
-1. Godot **4.6** installieren.
-2. `work/game/project.godot` importieren und öffnen. Godot erzeugt den Importcache selbst.
-3. Mit F6/F5 oder dem Play-Knopf starten.
-4. Für einen Windows-Export die zu Godot 4.6 passenden Exportvorlagen installieren und das vorhandene Preset **Windows Desktop** verwenden.
+Der aktuelle C++-Spielcode, Konfiguration und Werkzeuge stehen unter [unreal](unreal). Das [Unreal-Projektarchiv](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.5.0/BenchyRacers-Unreal-Projekt.zip) enthält zusätzlich die eigenen Projektassets. Separat lizenzierte Originalassets aus Electric Dreams und Fab sind ausgeschlossen und müssen zum Bearbeiten aus der eigenen Bibliothek bereitgestellt werden. Die Anleitung und `unreal/FAB-ASSETS.md` beschreiben die Vorbereitung für Unreal Engine 5.8.3. Der fertige Windows-Download enthält alle zum Spielen benötigten Assets.
 
-Das Projekt nutzt GDScript und Forward+. Die Modelle, Texturen und Musik für alle drei Karten sind enthalten. Die Skripte unter `work/tools` dienen zur Asset-Aufbereitung und zum Windows-Installer. Für diese Werkzeuge sind je nach Aufgabe Python mit Pillow/Numpy/Scipy, Blender und der Windows-C#-Compiler erforderlich. Zum Spielen oder Bearbeiten des bestehenden Godot-Projekts braucht man diese Werkzeuge nicht.
+Das ursprüngliche Godot-Projekt bleibt unter `work/game` erhalten. Sein [erstes Release v0.4.1](https://github.com/Wambo-20/BenchyRacers/releases/tag/v0.4.1) ist weiterhin verfügbar. Die Unreal- und Godot-Ausgaben sind im Mehrspielermodus nicht miteinander kompatibel.
 
-## Prüfungen
+## Prüfungen und Credits
 
-Die spielinterne Prüfroutine kann über zusätzliche Startargumente aufgerufen werden:
-
-```text
-godot --headless --path work/game -- --test --solo --wake-check --mechanics --graphics-check --duration=3
-```
-
-Der aktuelle Stand wurde als Windows-Spiel ausgeführt. Die Prüfungen umfassen Auftrieb, Kollisionen, Items, Grafikoptionen und die Ausrichtung sowie das Ausklingen der Heckspur. Eine direkte Verbindung zwischen zwei lokalen Spielinstanzen wurde geprüft. Internetverbindungen zwischen unterschiedlichen Anschlüssen sind nicht durchgängig getestet.
-
-## Stand und Credits
-
-Dies ist ein Arcade-Prototyp. Die Grafik erreicht noch nicht das angestrebte fotorealistische Niveau. Strecken, Balance und Online-Funktionen werden weiterentwickelt.
+Version 1.5 wurde als Windows-Spiel gebaut und geprüft: komplette Rennen auf allen drei Karten, Navigation, Auftrieb, Rücksetzen, Items und Münzverlust, Filament-/Menüanimationen sowie Zieleinlauf und Ergebnisübertragung zwischen zwei Spielprozessen. Prüfberichte stehen im Projektarchiv. Freies Bemalen des Benchys ist für später vorgemerkt.
 
 - Original #3DBenchy: Daniel Norée / Creative Tools, [CC0](https://www.3dbenchy.com/license/).
-- Naturtexturen und gescannte Modelle: [Poly Haven](https://polyhaven.com), CC0. Einzelquellen stehen in der Spielanleitung und `work/game/assets/scans/credits.json`.
-- Godot Engine: MIT; [Lizenz](docs/GODOT-LICENSE.txt) und [Drittanbieterhinweise](docs/GODOT-THIRDPARTY.txt).
-- Filamentnamen sind Marken der jeweiligen Hersteller; das Spiel ist kein offizielles Produkt dieser Marken.
+- Naturmodelle und Texturen: [Poly Haven](https://polyhaven.com), CC0; Einzelquellen stehen im Projektarchiv.
+- Electric Dreams: Epic Games / Quixel, Unreal-only. Fab-Inhalte sind gemäß ihren jeweiligen Lizenzen im fertigen Spiel eingebunden; keine Weitergabe als eigenständige Asset-Sammlung.
+- Filamentnamen sind Marken ihrer Hersteller; kein offizielles Markenprodukt.
+- Die ältere Godot-Ausgabe enthält ihre Lizenzhinweise unter `docs`.
 
-Für den eigenen Spielcode wurde bisher keine separate Open-Source-Lizenz festgelegt. Die genannten Lizenzen der eingebundenen Drittanbieter gelten unabhängig davon.
+Für den eigenen Spielcode wurde bisher keine separate Open-Source-Lizenz festgelegt. Die Drittanbieterlizenzen gelten unabhängig davon.
