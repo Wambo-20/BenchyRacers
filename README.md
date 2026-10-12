@@ -29,6 +29,13 @@ Der aktuelle C++-Spielcode, Konfiguration und Werkzeuge stehen unter [unreal](un
 
 Das ursprüngliche Godot-Projekt bleibt unter `work/game` erhalten. Sein [erstes Release v0.4.1](https://github.com/Wambo-20/BenchyRacers/releases/tag/v0.4.1) ist weiterhin verfügbar. Die Unreal- und Godot-Ausgaben sind im Mehrspielermodus nicht miteinander kompatibel.
 
+## Geplant für kommende Updates
+
+- Mehr Filamente zur Auswahl: zusätzliche Hersteller, Farben und besondere Filament-Looks.
+- Eigenes Benchy frei bemalen und individuelle Designs gestalten.
+
+Diese Erweiterungen sind geplant und in Version 1.5 noch nicht enthalten.
+
 ## Prüfungen und Credits
 
 Version 1.5 wurde als Windows-Spiel gebaut und geprüft: komplette Rennen auf allen drei Karten, Navigation, Auftrieb, Rücksetzen, Items und Münzverlust, Filament-/Menüanimationen sowie Zieleinlauf und Ergebnisübertragung zwischen zwei Spielprozessen. Prüfberichte stehen im Projektarchiv. Freies Bemalen des Benchys ist für später vorgemerkt.
