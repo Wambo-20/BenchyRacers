@@ -8,18 +8,29 @@ class SEditableTextBox;
 class UAudioComponent;
 class ABenchyDisplay;
 class ACameraActor;
+class IHttpRequest;
 UCLASS()
 class BENCHYRACERS_API UBenchyInstance : public UGameInstance {
     GENERATED_BODY()
 public:
     virtual void Init() override;
     virtual void Shutdown() override;
-    FString Nick=TEXT("Maker"), Address=TEXT("127.0.0.1"), Notice;
+    FString Nick=TEXT("Maker"), Address, Notice;
     int32 SelectedTrack=0;
     int32 SelectedColor=0;
     float MusicVolume=.35f;
     void SavePreferences();
+    void RefreshLobbyAddresses(UWorld* World,bool Force=false);
+    FString LobbyAddress(bool Internet) const;
+    FString InternetAddressStatus() const;
+    FString LobbyShareNotice;
+    TArray<FString> LocalIPv4s;
+    int32 LocalAddressIndex=0,LobbyPort=7777;
+    bool PublicAddressPending=false;
+    FString PublicIPv4;
 private:
+    double LastPublicAddressCheck=-1;
+    TSharedPtr<IHttpRequest,ESPMode::ThreadSafe> PublicAddressRequest;
     void NetworkFailure(UWorld* World,UNetDriver* Driver,ENetworkFailure::Type Type,const FString& Error);
     void TravelFailure(UWorld* World,ETravelFailure::Type Type,const FString& Error);
 };
@@ -39,6 +50,9 @@ public:
     bool ResultsVisible() const {return ResultPanel.IsValid();}
     void SelectColor(int32 Color);
     void SelectTrack(int32 Track);
+    void CopyLobbyAddress(bool Internet);
+    TSharedRef<SWidget> BuildLobbyInvite();
+    void AuditLobby();
     ABenchyDisplay* Display() const {return Preview;}
     bool MenuVisible() const {return Panel.IsValid();}
     UFUNCTION(Server,Reliable) void ServerStartRace();

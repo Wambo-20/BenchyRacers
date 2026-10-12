@@ -1,4 +1,5 @@
 #include "BenchyPawn.h"
+#include "BenchyFilaments.h"
 #include "BenchyItemFX.h"
 #include "BenchyPrintPath.h"
 #include "BenchyWorld.h"
@@ -466,21 +467,20 @@ void ABenchyPawn::TickAudit(float Time) {
     }
 }
 FString ABenchyPawn::FilamentName() const {
-    static const TCHAR* Names[]={TEXT("Bambu Lab PLA Matte Schwarz"),TEXT("Bambu Lab PLA Matte Mandarin Orange"),
-        TEXT("Bambu Lab PLA Basic Cyan"),TEXT("Bambu Lab PLA Basic Gelb"),TEXT("Prusament Galaxy Black"),TEXT("Prusament Glow in the Dark")};
-    return Names[FMath::Clamp(ColorIndex,0,5)];
+    return BenchyFilaments::Name(ColorIndex);
 }
-void ABenchyPawn::NextColor(){ServerColor((ColorIndex+1)%6);}
-void ABenchyPawn::ServerColor_Implementation(int32 Index){ColorIndex=FMath::Clamp(Index,0,5);OnRep_Color();}
+void ABenchyPawn::NextColor(){ServerColor((ColorIndex+1)%BenchyFilaments::Count);}
+void ABenchyPawn::ServerColor_Implementation(int32 Index){ColorIndex=FMath::Clamp(Index,0,BenchyFilaments::Count-1);OnRep_Color();}
 void ABenchyPawn::OnRep_Color() {
     static const FLinearColor Colors[]={FLinearColor(.018,.023,.028),FLinearColor(1,.30,.025),
-        FLinearColor(.02,.65,.8),FLinearColor(1,.8,.04),FLinearColor(.015,.019,.025),FLinearColor(.54,.78,.38)};
+        FLinearColor(.02,.65,.8),FLinearColor(.8,.43,.025),FLinearColor(.015,.019,.025),FLinearColor(.54,.78,.38),FLinearColor(1,.9,.01)};
     if(Filament) {
-        Filament->SetVectorParameterValue(TEXT("FilamentColor"),Colors[FMath::Clamp(ColorIndex,0,5)]);
+        Filament->SetVectorParameterValue(TEXT("FilamentColor"),Colors[FMath::Clamp(ColorIndex,0,BenchyFilaments::Count-1)]);
         Filament->SetScalarParameterValue(TEXT("Galaxy"),ColorIndex==4?1:0);
-        Filament->SetScalarParameterValue(TEXT("Glow"),ColorIndex==5?1:0);
+        Filament->SetScalarParameterValue(TEXT("Glow"),BenchyFilaments::IsGlow(ColorIndex)?1:0);
+        Filament->SetVectorParameterValue(TEXT("GlowColor"),BenchyFilaments::GlowColor(ColorIndex));
     }
-    if(GlowLight)GlowLight->SetIntensity(ColorIndex==5?65:0);
+    if(GlowLight){GlowLight->SetLightColor(BenchyFilaments::GlowColor(ColorIndex));GlowLight->SetIntensity(BenchyFilaments::IsGlow(ColorIndex)?65:0);}
 }
 void ABenchyPawn::NextQuality() { if(auto PC=Cast<ABenchyController>(Controller))PC->ShowMenu(1); }
 

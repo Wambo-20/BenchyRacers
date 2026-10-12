@@ -1,4 +1,5 @@
 #include "BenchyGameMode.h"
+#include "BenchyFilaments.h"
 #include "BenchyPawn.h"
 #include "BenchyWorld.h"
 #include "BenchyRace.h"
@@ -58,7 +59,7 @@ void ABenchyGameMode::StartRace(){
     static const TCHAR* Names[]={TEXT("Layer Larry"),TEXT("Nozzle Nova"),TEXT("Captain PETG"),TEXT("Speedy Spool"),TEXT("Aqua ASA")};
     for(int I=0;Slot<6;I++,Slot++){
         FActorSpawnParameters P;P.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-        auto B=GetWorld()->SpawnActor<ABenchyPawn>(ABenchyWorld::RoutePoint(0)+FVector(0,0,150),FRotator::ZeroRotator,P);B->IsBot=true;B->RacerName=Names[I%5];B->ServerColor_Implementation((I+1)%6);B->BeginRace(Slot);
+        auto B=GetWorld()->SpawnActor<ABenchyPawn>(ABenchyWorld::RoutePoint(0)+FVector(0,0,150),FRotator::ZeroRotator,P);B->IsBot=true;B->RacerName=Names[I%5];B->ServerColor_Implementation((I+1)%BenchyFilaments::Count);B->BeginRace(Slot);
     }
     for(TActorIterator<ABenchyPickup> It(GetWorld());It;++It){It->Available=true;It->SetActorHiddenInGame(false);It->ForceNetUpdate();}
     S->RegisterRacers();S->Phase=1;S->StartTime=GetWorld()->GetTimeSeconds()+5;S->FirstFinishTime=0;S->ForceNetUpdate();

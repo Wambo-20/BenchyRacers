@@ -1,4 +1,5 @@
 #include "BenchyDisplay.h"
+#include "BenchyFilaments.h"
 #include "BenchyWorld.h"
 #include "BenchyPrintPath.h"
 #include "Camera/CameraComponent.h"
@@ -44,9 +45,9 @@ void ABenchyDisplay::BeginPlay(){
     Camera->SetRelativeLocation(At);Camera->SetRelativeRotation((Target-Right*620-At).Rotation());
 }
 void ABenchyDisplay::SelectFilament(int32 Index,bool Reprint){
-    Color=FMath::Clamp(Index,0,5);const FLinearColor Colors[]={FLinearColor(.025,.031,.037),FLinearColor(1,.3,.025),FLinearColor(.01,.65,.83),FLinearColor(1,.78,.035),FLinearColor(.015,.019,.025),FLinearColor(.54,.78,.38)};
-    if(Filament){Filament->SetVectorParameterValue(TEXT("FilamentColor"),Colors[Color]);Filament->SetScalarParameterValue(TEXT("Galaxy"),Color==4?1:0);Filament->SetScalarParameterValue(TEXT("Glow"),Color==5?1:0);}
-    Glow->SetIntensity(Color==5?100:0);if(Reprint){PrintAge=0;Progress=0;}else Progress=1;
+    Color=FMath::Clamp(Index,0,BenchyFilaments::Count-1);const FLinearColor Colors[]={FLinearColor(.025,.031,.037),FLinearColor(1,.3,.025),FLinearColor(.01,.65,.83),FLinearColor(.8,.43,.025),FLinearColor(.015,.019,.025),FLinearColor(.54,.78,.38),FLinearColor(1,.9,.01)};
+    if(Filament){Filament->SetVectorParameterValue(TEXT("FilamentColor"),Colors[Color]);Filament->SetScalarParameterValue(TEXT("Galaxy"),Color==4?1:0);Filament->SetScalarParameterValue(TEXT("Glow"),BenchyFilaments::IsGlow(Color)?1:0);Filament->SetVectorParameterValue(TEXT("GlowColor"),BenchyFilaments::GlowColor(Color));}
+    Glow->SetLightColor(BenchyFilaments::GlowColor(Color));Glow->SetIntensity(BenchyFilaments::IsGlow(Color)?100:0);if(Reprint){PrintAge=0;Progress=0;}else Progress=1;
     if(Filament)Filament->SetScalarParameterValue(TEXT("PrintProgress"),Progress);
 }
 void ABenchyDisplay::Tick(float DT){

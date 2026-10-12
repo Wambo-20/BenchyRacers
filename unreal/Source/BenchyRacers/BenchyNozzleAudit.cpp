@@ -80,7 +80,7 @@ void BenchyValidateNozzles(ABenchyGameMode* Mode){
         if(T>55&&Stage!=13){Report(TEXT("Nozzles"),false,FString::Printf(TEXT("\"timeout_stage\":%d,\"projectiles\":%d,\"victim_coins\":%d"),Stage,Projectiles(W),IsValid(Victim)?Victim->Coins:-1));FPlatformMisc::RequestExit(false);}
     }
     if(Flag(TEXT("BenchyFilamentAudit"))){
-        static int Stage=0;static float Next=0;static ACameraActor* Camera=nullptr;static bool Printed=false,Galaxy=false,Glow=false;
+        static int Stage=0;static float Next=0;static ACameraActor* Camera=nullptr;static bool Printed=false,Galaxy=false,Glow=false,Neon=false;static float Sun=0,Sky=0;
         if(Stage==0&&T>4){S->Phase=2;S->StartTime=T;Place(B,230,11);B->ServerColor_Implementation(1);
             FVector At=B->GetActorLocation()-B->GetActorForwardVector()*720+B->GetActorRightVector()*540+FVector(0,0,310);
             Camera=W->SpawnActor<ACameraActor>(At,(B->GetActorLocation()+FVector(0,0,100)-At).Rotation());auto C=Camera->GetCameraComponent();C->SetFieldOfView(55);
@@ -97,10 +97,14 @@ void BenchyValidateNozzles(ABenchyGameMode* Mode){
         if(Stage==61&&T>Next){B->ServerColor_Implementation(5);Stage=7;}
         if(Stage==7&&T>13){auto M=Filament(B);Glow=M&&M->K2_GetScalarParameterValue(TEXT("Glow"))==1&&B->FilamentName().Contains(TEXT("Glow in the Dark"));Shot(TEXT("Glow-Day"));Stage=8;}
         if(Stage==8&&T>14){auto C=Camera->GetCameraComponent();C->PostProcessSettings.AutoExposureMinBrightness=10;C->PostProcessSettings.AutoExposureMaxBrightness=10;
-            for(TActorIterator<ADirectionalLight> It(W);It;++It)It->GetLightComponent()->SetIntensity(.03f);
-            for(TActorIterator<ASkyLight> It(W);It;++It)It->GetLightComponent()->SetIntensity(.004f);Stage=9;}
+            for(TActorIterator<ADirectionalLight> It(W);It;++It){Sun=It->GetLightComponent()->Intensity;It->GetLightComponent()->SetIntensity(.03f);}
+            for(TActorIterator<ASkyLight> It(W);It;++It){Sky=It->GetLightComponent()->Intensity;It->GetLightComponent()->SetIntensity(.004f);}Stage=9;}
         if(Stage==9&&T>16){Shot(TEXT("Glow-Dark"));Stage=10;}
-        if(Stage==10&&T>18){Report(TEXT("Filaments"),Printed&&Galaxy&&Glow,FString::Printf(TEXT("\"printed_layers_enabled\":%s,\"prusament_galaxy_enabled\":%s,\"glow_filament_enabled\":%s,\"color_count\":6"),Printed?TEXT("true"):TEXT("false"),Galaxy?TEXT("true"):TEXT("false"),Glow?TEXT("true"):TEXT("false")));FPlatformMisc::RequestExit(false);}
+        if(Stage==10&&T>18){B->ServerColor_Implementation(6);Stage=11;}
+        if(Stage==11&&T>20){auto M=Filament(B);auto Tint=M?M->K2_GetVectorParameterValue(TEXT("GlowColor")):FLinearColor::Black;Neon=M&&M->K2_GetScalarParameterValue(TEXT("Glow"))==1&&Tint.R>.9&&Tint.G>.7&&Tint.B<.05&&B->FilamentName()==TEXT("Neon Gelb");Shot(TEXT("NeonGelb-Dark"));Stage=12;}
+        if(Stage==12&&T>21){for(TActorIterator<ADirectionalLight> It(W);It;++It)It->GetLightComponent()->SetIntensity(Sun);for(TActorIterator<ASkyLight> It(W);It;++It)It->GetLightComponent()->SetIntensity(Sky);auto C=Camera->GetCameraComponent();C->PostProcessSettings.AutoExposureMinBrightness=12;C->PostProcessSettings.AutoExposureMaxBrightness=12;Stage=13;}
+        if(Stage==13&&T>23){Shot(TEXT("NeonGelb-Day"));Stage=14;}
+        if(Stage==14&&T>24){B->ServerColor_Implementation(999);Neon&=B->ColorIndex==6;Report(TEXT("Filaments"),Printed&&Galaxy&&Glow&&Neon,FString::Printf(TEXT("\"printed_layers_enabled\":%s,\"prusament_galaxy_enabled\":%s,\"glow_filament_enabled\":%s,\"neon_yellow_glow_enabled\":%s,\"color_count\":7"),Printed?TEXT("true"):TEXT("false"),Galaxy?TEXT("true"):TEXT("false"),Glow?TEXT("true"):TEXT("false"),Neon?TEXT("true"):TEXT("false")));FPlatformMisc::RequestExit(false);}
     }
     if(Flag(TEXT("BenchyNozzleNetworkAudit"))){
         static int Stage=0;static ABenchyPawn* Front=nullptr;static ABenchyPawn* Rear=nullptr;static bool Forward=false;

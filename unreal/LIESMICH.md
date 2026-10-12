@@ -1,4 +1,4 @@
-# Benchy Racers – Version 1.5.0
+# Benchy Racers – Version 1.5.1
 
 Installierbares Windows-Rennspiel mit Unreal Engine 5.8.3. Drei Strecken, Einzelrennen gegen fünf Gegner und private Rennen mit bis zu acht Spielern über eine direkte Netzwerkverbindung. Kein Browser und kein Unreal Editor zum Spielen nötig.
 
@@ -45,21 +45,21 @@ Die Standard Nozzle fliegt geradeaus. Die Lenknozzle verfolgt den Fahrer direkt 
 
 Unten links zeigt ein großer Itemplatz Symbol, Namen und die Benutzungstaste. Die Lenknozzle zeigt zusätzlich den vorgesehenen Gegner; ihre blaue Spur unterscheidet sie vom geraden Standard-Schuss. Beim Einsammeln pulsiert das Symbol; aktive Items zeigen ihre Restzeit. Das Schild zieht animierte blaue Schutzringe um das Boot und zerbricht bei einem abgefangenen Treffer. Der Turbo erzeugt zwei leuchtende Strahlen am Heck, eine kurze nachlaufende Spur und eine sanfte Kameraweitung. Treffer erzeugen einen sichtbaren Funkenstoß. Diese Effekte sind auch für Mitspieler sichtbar. Die Anzeige skaliert mit der Bildschirmhöhe.
 
-Alle Benchys zeigen FDM-Druckschichten, die am Modell befestigt sind und sich mit dem Boot bewegen. Prusament Galaxy Black trägt vereinzelte kleine, selbstleuchtende Sterne in Weißblau, Violett und warmem Gold. Die Sterne funkeln unabhängig voneinander und reagieren auf den Blickwinkel. Der schwarze Filamentkörper bleibt sichtbar; graue Metallflecken entfallen. Prusament Glow in the Dark ist bei Tageslicht hellgrün und leuchtet im Dunkeln grün. Es stehen insgesamt sechs Filamentfarben zur Auswahl. Die Kamera verwendet keine Bewegungs- oder Tiefenunschärfe und rendert mit voller Auflösung und leichter Schärfung.
+Alle Benchys zeigen FDM-Druckschichten, die am Modell befestigt sind und sich mit dem Boot bewegen. Prusament Galaxy Black trägt vereinzelte kleine, selbstleuchtende Sterne in Weißblau, Violett und warmem Gold. Die Sterne funkeln unabhängig voneinander und reagieren auf den Blickwinkel. Der schwarze Filamentkörper bleibt sichtbar; graue Metallflecken entfallen. Prusament Glow in the Dark ist bei Tageslicht hellgrün und leuchtet im Dunkeln grün. Neon Gelb leuchtet gelb und zeigt dieselben sichtbaren Druckschichten. Das normale Bambu Lab PLA Basic Gelb ist ein dunkleres, warmes Goldgelb ohne Eigenleuchten und unterscheidet sich klar von Neon Gelb. Es stehen insgesamt sieben Filamentfarben zur Auswahl. Die Kamera verwendet keine Bewegungs- oder Tiefenunschärfe und rendert mit voller Auflösung und leichter Schärfung.
 
 Musik, eigene Geräusche für Sammeln, Countdown, Items, Treffer und Zieleinlauf sowie Galaxy-Glitzer sind enthalten. Das Menü speichert Filamentfarbe, Musiklautstärke und Grafikeinstellungen. Es bietet Qualitätsstufen, Auflösung, Fenster/Vollbild, VSync und Bildlimit. Das Menü pausiert ein aktives Einzelrennen. Nach dem Zieleinlauf sowie im gemeinsamen Rennen läuft die Fahrt beim Öffnen des Menüs weiter.
 
-Version 1.5.0 integriert sechs neue Fab-Packs, stellt Frostfjord als Winterwelt wieder her und ergänzt den persönlichen Zieleinlauf mit automatischer Weiterfahrt und Live-Ergebnissen. Die seitliche Menüansicht, Kartenübersicht, Druckanimation und leuchtenden Galaxy-Sterne bleiben enthalten. Der Abstimmungsstand steht in MECHANIKEN-UND-AUSBLICK.md.
+Version 1.5.1 integriert sechs neue Fab-Packs, stellt Frostfjord als Winterwelt wieder her und ergänzt den persönlichen Zieleinlauf mit automatischer Weiterfahrt und Live-Ergebnissen. Die seitliche Menüansicht, Kartenübersicht, Druckanimation und leuchtenden Galaxy-Sterne bleiben enthalten. Der Abstimmungsstand steht in MECHANIKEN-UND-AUSBLICK.md.
 
 ## Mit Freunden spielen
 
 1. Alle verwenden dieselbe Version.
 2. Der Gastgeber wählt Strecke und „Online-Lobby erstellen“.
-3. Freunde geben unter „Mit Freunden verbinden“ die erreichbare IP-Adresse oder den Hostnamen des Gastgebers ein. Die Lobby zeigt verbundene Fahrer.
+3. Der Gastgeber kopiert oben im linken Auswahlmenü unter „Freunde einladen“ die Internet-Adresse oder die Heimnetz-/VPN-Adresse und schickt sie an seine Freunde. Bei mehreren Netzwerkadaptern kann er die passende Adresse wählen. Die Internet-Adresse wird beim Öffnen der Lobby über api.ipify.org ermittelt; das prüft keine Erreichbarkeit und richtet keine Portfreigabe ein. Die ermittelte öffentliche Adresse wird nicht dauerhaft gespeichert. Bei fehlender Verbindung lässt sich die Abfrage erneut starten. Freunde geben unter „Mit Freunden verbinden“ die erreichbare IP-Adresse oder den Hostnamen des Gastgebers ein. Die Lobby zeigt verbundene Fahrer.
 4. Der Gastgeber startet das Rennen. Freie Plätze bis sechs Fahrer werden mit Gegnern aufgefüllt; bis zu acht Menschen können teilnehmen.
 5. Nachdem alle Teilnehmer fertig oder ausgeschieden sind, kann der Gastgeber über das Menü eine andere Strecke für alle laden. Danach startet er das nächste Rennen.
 
-Im selben Heimnetz die lokale IPv4-Adresse des Hosts verwenden. Über das Internet muss UDP-Port 7777 zum Host erreichbar sein, gegebenenfalls durch eine Portfreigabe im Router und die Windows-Firewall. Alternativ können alle im gleichen privaten VPN-Netz spielen. Bei abweichendem Port die Adresse als Host:Port eingeben. Die Windows-Netzwerkeigenschaften zeigen die lokale IPv4-Adresse an. 127.0.0.1 bezeichnet nur den eigenen PC.
+Im selben Heimnetz die lokale IPv4-Adresse des Hosts verwenden. Über das Internet muss UDP-Port 7777 zum Host erreichbar sein, gegebenenfalls durch eine Portfreigabe im Router und die Windows-Firewall. Alternativ können alle im gleichen privaten VPN-Netz spielen. Bei abweichendem Port die Adresse als Host:Port eingeben. Die Lobby zeigt den tatsächlich verwendeten Port zusammen mit der Adresse an und bietet Kopierknöpfe. 127.0.0.1 bezeichnet nur den eigenen PC.
 
 Es gibt keine öffentliche Spielersuche, Vermittlungsserver oder automatische Routerfreigabe. Laufende Rennen nehmen keine neuen Fahrer auf. Bei einem Verbindungsfehler kehrt das Spiel mit einer Meldung ins Hauptmenü zurück. Wird der Host beendet, endet die gemeinsame Sitzung.
 

@@ -15,6 +15,7 @@ printed=expression(m,ue.MaterialExpressionScalarParameter,parameter_name='Printe
 pitch=expression(m,ue.MaterialExpressionScalarParameter,parameter_name='LayerPitch',default_value=1.)
 galaxy=expression(m,ue.MaterialExpressionScalarParameter,parameter_name='Galaxy',default_value=0.)
 glow=expression(m,ue.MaterialExpressionScalarParameter,parameter_name='Glow',default_value=0.)
+glow_color=expression(m,ue.MaterialExpressionVectorParameter,parameter_name='GlowColor',default_value=ue.LinearColor(.1,.75,.25,1))
 progress=expression(m,ue.MaterialExpressionScalarParameter,parameter_name='PrintProgress',default_value=1.)
 bottom=expression(m,ue.MaterialExpressionScalarParameter,parameter_name='PrintMin',default_value=-100.)
 top=expression(m,ue.MaterialExpressionScalarParameter,parameter_name='PrintMax',default_value=100.)
@@ -84,7 +85,7 @@ result(custom(m,'''
 float z=L.z/max(Pitch,.00001);
 float layers=1-.12*cos(z*6.283185)*(1-smoothstep(.65,1.8,fwidth(z)));
 float form=.65+.35*saturate(dot(normalize(N),normalize(V)));
-return F.rgb*120000 + float3(.1,.75,.25)*Glow*400*layers*form;
-''',{'L':local,'Pitch':pitch,'N':normal,'V':view,'T':time,'F':flake,'Glow':glow}),m,ue.MaterialProperty.MP_EMISSIVE_COLOR)
+return F.rgb*120000 + GlowColor*Glow*400*layers*form;
+''',{'L':local,'Pitch':pitch,'N':normal,'V':view,'T':time,'F':flake,'Glow':glow,'GlowColor':glow_color}),m,ue.MaterialProperty.MP_EMISSIVE_COLOR)
 finish(m)
 ue.log('BENCHY_PRINTED_FILAMENT_READY')
