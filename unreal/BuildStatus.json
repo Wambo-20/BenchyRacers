@@ -1,0 +1,17 @@
+{
+  "version": "1.6.1-unreal-test",
+  "native_executable_sha256": "0c16d8d40bcf110ea8d8637f802c614da3555f3818553a7f3d764991d817def7",
+  "logo_editor_verified": true,
+  "multiple_logo_layers_verified": true,
+  "local_chat_and_peer_logos_verified": true,
+  "eos_host_verified": true,
+  "late_join_and_next_race_verified": true,
+  "remote_relay_connection_verified": false,
+  "game_container_sha256": {
+    "BenchyRacers-Windows.pak": "e32c239d321c5ab4953a35f77c1f9a6e2c6cc5f1303dd0609e7f621c3eb49d88",
+    "BenchyRacers-Windows.ucas": "8194aecee2b09a81d7315fd1143e2e90821462c016b11d8385aaa136afb200fe",
+    "BenchyRacers-Windows.utoc": "ae26b9db5fa9a91229b8e042f69aa2bb903d75d627177bcb2f506236fbbf34e1",
+    "global.ucas": "ead772598358679a069d9adf36289a7d766a49dc64ae99574cbc7bedec4a9d3e",
+    "global.utoc": "8793f7de2bfdbb5efa5b169518ed254ca6995c57a379813eae78336bfe4c6435"
+  }
+}

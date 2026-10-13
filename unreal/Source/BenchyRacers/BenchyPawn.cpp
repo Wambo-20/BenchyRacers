@@ -152,7 +152,7 @@ void ABenchyPawn::Tick(float DT) {
         UpdateWake(DT,Time); return;
     }
     auto Race=GetWorld()->GetGameState<ABenchyRaceState>();
-    const bool Racing=Audit || (Race && Race->Phase==2 && !Finished);
+    const bool Racing=Audit || (Race && Race->Phase==2 && !Finished && !WaitingForRace);
     const bool Cruising=Finished&&Race&&(Race->Phase==2||Race->Phase==3);
     if(Racing && (IsBot || (IsLocallyControlled() && FParse::Param(FCommandLine::Get(),TEXT("BenchyRaceAudit"))))) DriveAI();
     if(Cruising)DriveFinished(DT);
@@ -273,18 +273,18 @@ void ABenchyPawn::ResetBoat() {
 }
 void ABenchyPawn::ServerReset_Implementation(){ResetBoat();}
 void ABenchyPawn::ServerControls_Implementation(float Gas,float Turn,bool Boosting){
-    if(Finished||!FMath::IsFinite(Gas)||!FMath::IsFinite(Turn))return;
+    if(Finished||WaitingForRace||!FMath::IsFinite(Gas)||!FMath::IsFinite(Turn))return;
     Throttle=FMath::Clamp(Gas,-1.f,1.f);Steering=FMath::Clamp(Turn,-1.f,1.f);Boost=Boosting;LastInputTime=GetWorld()->GetTimeSeconds();
 }
 void ABenchyPawn::BeginRace(int32 Slot){
-    RaceEntryId=Slot;PostFinishCursor=0;Hull->SetCollisionResponseToChannel(ECC_PhysicsBody,ECR_Block);
+    WaitingForRace=false;RaceEntryId=Slot;PostFinishCursor=0;Hull->SetCollisionResponseToChannel(ECC_PhysicsBody,ECR_Block);
     ItemEventTime=-100;ItemEvent=0;ItemNoticeText.Empty();LastShotTarget.Empty();LastShotBackward=false;
     Passed=0;NextGate=1;Lap=1;Coins=0;Item=0;RaceTime=0;Finished=false;FinishPlace=0;ShieldUntil=0;StunUntil=0;ItemBoostUntil=0;NextResetTime=0;
     ResetBoat();FVector P=GetActorLocation();FVector F=GetActorForwardVector();P+=GetActorRightVector()*((Slot%2)*2-1)*320-F*(Slot/2)*470;
     SetActorLocation(P,false,nullptr,ETeleportType::TeleportPhysics);NetworkPosition=P;
 }
 bool ABenchyPawn::Collect(int32 Kind){
-    if(!HasAuthority()||Finished)return false;
+    if(!HasAuthority()||Finished||WaitingForRace)return false;
     if(Kind==0){if(Coins>=BenchyRules::MaxCoins)return false;Coins++;PlayCue(0);}
     else {if(Item!=0)return false;Item=FMath::RandRange(1,4);PlayCue(1);ItemFeedback(0);}ForceNetUpdate();return true;
 }
@@ -300,14 +300,14 @@ bool ABenchyPawn::WantsBackwardShot() const {
 }
 ABenchyPawn* ABenchyPawn::NozzleTarget(bool Backward) const {
     TArray<ABenchyPawn*> Order;
-    for(TActorIterator<ABenchyPawn> It(GetWorld());It;++It)if(!It->Finished&&!It->IsActorBeingDestroyed())Order.Add(*It);
+    for(TActorIterator<ABenchyPawn> It(GetWorld());It;++It)if(!It->Finished&&!It->WaitingForRace&&!It->IsActorBeingDestroyed())Order.Add(*It);
     Order.Sort([](const ABenchyPawn& A,const ABenchyPawn& B){float AP=A.Progress(),BP=B.Progress();return AP==BP?A.GetUniqueID()<B.GetUniqueID():AP>BP;});
     const int Place=Order.IndexOfByKey(this),Index=Place+(Backward?1:-1);
     return Place!=INDEX_NONE&&Order.IsValidIndex(Index)?Order[Index]:nullptr;
 }
 void ABenchyPawn::UseItem(){ServerUseItem(WantsBackwardShot());}
 void ABenchyPawn::ServerUseItem_Implementation(bool Backward){
-    auto S=GetWorld()->GetGameState<ABenchyRaceState>();float T=GetWorld()->GetTimeSeconds();if(!S||S->Phase!=2||Finished||Item==0||T<StunUntil)return;
+    auto S=GetWorld()->GetGameState<ABenchyRaceState>();float T=GetWorld()->GetTimeSeconds();if(!S||S->Phase!=2||Finished||WaitingForRace||Item==0||T<StunUntil)return;
     if(Item==1||Item==4){
         ABenchyPawn* Locked=Item==4?NozzleTarget(Backward):nullptr;
         if(Item==4&&!Locked){ItemNotice(Backward?TEXT("Kein Ziel hinten. Item bleibt erhalten."):TEXT("Vorne kein Ziel. S + Leertaste: rückwärts."));return;}
@@ -393,7 +393,7 @@ void ABenchyPawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(ABenchyPawn,NextGate);DOREPLIFETIME(ABenchyPawn,Lap);DOREPLIFETIME(ABenchyPawn,RaceTime);DOREPLIFETIME(ABenchyPawn,Finished);
     DOREPLIFETIME(ABenchyPawn,Passed);DOREPLIFETIME(ABenchyPawn,Coins);DOREPLIFETIME(ABenchyPawn,Item);DOREPLIFETIME(ABenchyPawn,FinishPlace);
-    DOREPLIFETIME(ABenchyPawn,RaceEntryId);
+    DOREPLIFETIME(ABenchyPawn,RaceEntryId);DOREPLIFETIME(ABenchyPawn,WaitingForRace);DOREPLIFETIME(ABenchyPawn,LobbyHost);DOREPLIFETIME(ABenchyPawn,LogoSpec);
     DOREPLIFETIME(ABenchyPawn,MissedCheckpoint);
     DOREPLIFETIME(ABenchyPawn,LastShotBackward);DOREPLIFETIME(ABenchyPawn,LastShotTarget);
     DOREPLIFETIME(ABenchyPawn,RacerName);DOREPLIFETIME(ABenchyPawn,IsBot);DOREPLIFETIME(ABenchyPawn,ShieldUntil);DOREPLIFETIME(ABenchyPawn,StunUntil);

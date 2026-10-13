@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "BenchyLogoSpec.h"
 #include "BenchyPawn.generated.h"
 class UBoxComponent;
 class UStaticMeshComponent;
@@ -42,6 +43,9 @@ public:
     UPROPERTY(Replicated) int32 RaceEntryId=-1;
     UPROPERTY(Replicated) FString RacerName;
     UPROPERTY(Replicated) bool IsBot=false;
+    UPROPERTY(Replicated) bool WaitingForRace=false;
+    UPROPERTY(Replicated) bool LobbyHost=false;
+    UPROPERTY(Replicated) FBenchyLogoSpec LogoSpec;
     UPROPERTY(Replicated) float ShieldUntil=0;
     UPROPERTY(Replicated) float StunUntil=0;
     UPROPERTY(Replicated) float RespawnUntil=0;

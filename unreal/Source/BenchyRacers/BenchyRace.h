@@ -26,6 +26,8 @@ public:
     UPROPERTY(Replicated) float StartTime=0;
     UPROPERTY(Replicated) float FirstFinishTime=0;
     UPROPERTY(Replicated) TArray<FBenchyResult> Results;
+    UPROPERTY(Replicated) TArray<FString> LobbyChat;
+    void AddLobbyLine(const FString& Line);
     void RegisterRacers();
     int32 RecordFinish(ABenchyPawn* Boat);
     void UpdateResults();

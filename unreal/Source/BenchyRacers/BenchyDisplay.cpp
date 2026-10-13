@@ -43,6 +43,7 @@ void ABenchyDisplay::BeginPlay(){
     FVector Target(0,0,Height*.45f);FVector At(-1050,-1270,Height*.45f+800);
     FVector Right=FRotationMatrix((Target-At).Rotation()).GetUnitAxis(EAxis::Y);
     Camera->SetRelativeLocation(At);Camera->SetRelativeRotation((Target-Right*620-At).Rotation());
+    DefaultCameraLocation=Camera->GetRelativeLocation();DefaultCameraRotation=Camera->GetRelativeRotation();
 }
 void ABenchyDisplay::SelectFilament(int32 Index,bool Reprint){
     Color=FMath::Clamp(Index,0,BenchyFilaments::Count-1);const FLinearColor Colors[]={FLinearColor(.025,.031,.037),FLinearColor(1,.3,.025),FLinearColor(.01,.65,.83),FLinearColor(.8,.43,.025),FLinearColor(.015,.019,.025),FLinearColor(.54,.78,.38),FLinearColor(1,.9,.01)};
@@ -55,7 +56,27 @@ void ABenchyDisplay::Tick(float DT){
     if(Filament)Filament->SetScalarParameterValue(TEXT("PrintProgress"),Progress);
     bool Printing=Progress<1;Head->SetVisibility(Printing,true);
     // Keep the object stationary during deposition; rotate the complete print bed afterward.
-    if(!Printing)Angle+=DT*7;
+    if(!Printing&&!LogoEditing)Angle+=DT*7;
     FRotator R(0,Angle,0);Boat->SetRelativeRotation(R);Boat->SetRelativeLocation(R.RotateVector(BoatOrigin));Bed->SetRelativeRotation(R);
     if(Printing){auto XY=BenchyPrint::Nozzle(Progress,PrintAge,900);FVector P(XY.X,XY.Y,12+Progress*Height+44);Head->SetRelativeLocation(R.RotateVector(P));}
+}
+void ABenchyDisplay::SetLogoEditor(bool Enabled,int32 Side){LogoEditing=Enabled;if(Enabled){Progress=1;PrintAge=3;Angle=Side==1?180:Side==4?90:0;if(Filament)Filament->SetScalarParameterValue(TEXT("PrintProgress"),1);}}
+void ABenchyDisplay::SetLobbyLayout(bool Enabled,float Aspect){
+    Bed->SetVisibility(!Enabled);if(!Enabled){Camera->SetRelativeLocation(DefaultCameraLocation);Camera->SetRelativeRotation(DefaultCameraRotation);return;}
+    FVector Target(0,0,Height*.45f);
+    FVector At=Target+(DefaultCameraLocation-Target)*1.9f;
+    auto Basis=FRotationMatrix(DefaultCameraRotation);
+    FVector Forward=Basis.GetUnitAxis(EAxis::X),Right=Basis.GetUnitAxis(EAxis::Y),Up=Basis.GetUnitAxis(EAxis::Z);
+    FVector Delta=Target-At;float Depth=FVector::DotProduct(Delta,Forward),Tangent=FMath::Tan(FMath::DegreesToRadians(Camera->FieldOfView*.5f));
+    At+=Right*(FVector::DotProduct(Delta,Right)-.64f*Depth*Tangent)+Up*(FVector::DotProduct(Delta,Up)-.50f*Depth*Tangent/FMath::Max(1.f,Aspect));
+    Camera->SetRelativeLocation(At);Camera->SetRelativeRotation(DefaultCameraRotation);
+}
+void ABenchyDisplay::SetPortrait(){Bed->SetVisibility(false);Head->SetVisibility(false,true);Progress=1;PrintAge=3;if(Filament)Filament->SetScalarParameterValue(TEXT("PrintProgress"),1);Fill->SetIntensity(6000);Fill->SetAttenuationRadius(700);}
+
+void ABenchyDisplay::SetEditorLayout(int32 Side,float Aspect){
+    Bed->SetVisibility(false);Head->SetVisibility(false,true);
+    FVector Target(0,0,Height*.45f),At=Target+(Side==2?FVector(0,-200,1550):FVector(-150,-1450,350));
+    FRotator Rotation=(Target-At).Rotation();auto Basis=FRotationMatrix(Rotation);float Depth=(Target-At).Size();
+    At-=Basis.GetUnitAxis(EAxis::Y)*(.28f*Depth*FMath::Tan(FMath::DegreesToRadians(Camera->FieldOfView*.5f)));
+    Camera->SetRelativeLocation(At);Camera->SetRelativeRotation(Rotation);
 }

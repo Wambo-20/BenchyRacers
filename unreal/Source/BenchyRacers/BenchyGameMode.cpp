@@ -4,6 +4,7 @@
 #include "BenchyWorld.h"
 #include "BenchyRace.h"
 #include "BenchyMenu.h"
+#include "BenchyOnline.h"
 #include "BenchyAudit.h"
 #include "Engine/Canvas.h"
 #include "Engine/World.h"
@@ -24,7 +25,8 @@ void ABenchyGameMode::InitGame(const FString& Map,const FString& Options,FString
     Super::InitGame(Map,Options,Error);int Track=UGameplayStatics::GetIntOption(Options,TEXT("Track"),GetGameInstance<UBenchyInstance>()?GetGameInstance<UBenchyInstance>()->SelectedTrack:0);FParse::Value(FCommandLine::Get(),TEXT("BenchyTrack="),Track);ABenchyWorld::ActiveTrack=FMath::Clamp(Track,0,2);
 }
 void ABenchyGameMode::PreLogin(const FString& Options,const FString& Address,const FUniqueNetIdRepl& Id,FString& Error){
-    Super::PreLogin(Options,Address,Id,Error);auto S=GetGameState<ABenchyRaceState>();if(GetNumPlayers()>=8)Error=TEXT("Die Lobby ist voll (8 Fahrer).");else if(S&&(S->Phase==1||S->Phase==2))Error=TEXT("Das Rennen laeuft bereits. Nach dem Rennen erneut verbinden.");
+    Super::PreLogin(Options,Address,Id,Error);auto S=GetGameState<ABenchyRaceState>();if(GetNumPlayers()>=8)Error=TEXT("Die Lobby ist voll (8 Fahrer).");
+    auto I=GetGameInstance<UBenchyInstance>();if(I&&I->Online&&I->Online->Hosting&&!I->Online->RoomCode.IsEmpty()&&UGameplayStatics::ParseOption(Options,TEXT("RoomCode"))!=I->Online->RoomCode)Error=TEXT("Der Lobby-Code stimmt nicht überein.");
 }
 void ABenchyGameMode::RestartPlayer(AController* Player){
     if(!Player||Player->GetPawn())return;int32 Slot=0;for(TActorIterator<ABenchyPawn> It(GetWorld());It;++It)Slot++;
@@ -33,11 +35,12 @@ void ABenchyGameMode::RestartPlayer(AController* Player){
     P+=FVector(-Dir.Y,Dir.X,0)*((Slot%2)*2-1)*320-Dir*(Slot/2)*470;
     FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
     auto B=GetWorld()->SpawnActor<ABenchyPawn>(P+FVector(0,0,150),Dir.Rotation(),Params);Player->Possess(B);
+    auto Race=GetGameState<ABenchyRaceState>();B->WaitingForRace=Race&&(Race->Phase==1||Race->Phase==2);B->LobbyHost=GetNetMode()==NM_ListenServer&&Player->IsLocalController();
     B->RacerName=Player->PlayerState?Player->PlayerState->GetPlayerName():TEXT("Maker");if(Index>0){B->Passed=3;B->NextGate=4;}
 }
-void ABenchyGameMode::Logout(AController* Player){if(Player&&Player->GetPawn())Player->GetPawn()->Destroy();Super::Logout(Player);}
+void ABenchyGameMode::Logout(AController* Player){if(Player&&Player->GetPawn()){if(auto State=GetGameState<ABenchyRaceState>())if(auto Boat=Cast<ABenchyPawn>(Player->GetPawn()))State->AddLobbyLine(Boat->RacerName+TEXT(" hat die Lobby verlassen."));Player->GetPawn()->Destroy();}Super::Logout(Player);}
 void ABenchyGameMode::BeginPlay(){
-    Super::BeginPlay();GetWorld()->SpawnActor<ABenchyWorld>();
+    Super::BeginPlay();if(auto Instance=GetGameInstance<UBenchyInstance>())if(auto State=GetGameState<ABenchyRaceState>())State->LobbyChat=Instance->CarriedChat;GetWorld()->SpawnActor<ABenchyWorld>();
     for(auto It=GetWorld()->GetPlayerControllerIterator();It;++It)RestartPlayer(It->Get());
     const bool Audit=FParse::Param(FCommandLine::Get(),TEXT("BenchyAudit"));
     if(Audit){auto S=GetGameState<ABenchyRaceState>();S->Phase=2;S->StartTime=0;}

@@ -1,44 +1,38 @@
 # Benchy Racers
 
-Installierbares 3D-Wasser-Rennspiel für Windows mit dem originalen #3DBenchy. Aktuelle Version: **1.5.1 – Unreal Engine**.
+Installierbares 3D-Wasser-Rennspiel für Windows mit dem originalen #3DBenchy. Aktuelles Update: **1.6.1 – Logo-Ebenen und Lobby (Testausgabe)**.
 
-## Download und Spielen
+## Download
 
-Den [Windows-Installer](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.5.1/BenchyRacers-Unreal-Setup.exe) herunterladen und ausführen. Alternativ die [Portable-ZIP](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.5.1/BenchyRacers-Unreal-Portable.zip) vollständig entpacken und `BenchyRacers.exe` starten. Windows 64 Bit und eine DirectX-12-Grafikkarte sind erforderlich. Unreal Engine, Epic Games Launcher und Fab-Packs werden zum Spielen nicht benötigt. Der Installer aktualisiert die separate Unreal-Ausgabe.
+[Windows-Installer 1.6.1](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.1/BenchyRacers-1.6.1-Test-Setup.exe) oder [Portable-ZIP](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.1/BenchyRacers-1.6.1-Test-Portable.zip). Nach der Installation **Benchy Racers Unreal Test** starten. Die Testausgabe besitzt einen eigenen Installationsordner; Version 1.5.1 bleibt separat erhalten. Windows 64 Bit und DirectX 12 sind erforderlich, Unreal Engine und Epic Games Launcher nicht.
 
-Die [Release-Seite](https://github.com/Wambo-20/BenchyRacers/releases/tag/v1.5.1) enthält außerdem das Unreal-Projektarchiv und SHA256-Prüfsummen.
+[Release-Details, Projektarchiv und Prüfsummen](https://github.com/Wambo-20/BenchyRacers/releases/tag/v1.6.1).
 
-- Drei unterschiedliche Welten: **Sonnendeck**, **Kupferhafen** und der verschneite **Frostfjord**, mit Flüssen, Kanälen, gescannten Felsen und Vegetation.
-- Einzelrennen gegen fünf Gegner; private Rennen mit bis zu acht Menschen.
-- Sieben Filamentfarben mit sichtbaren Druckschichten, funkelndem Prusament Galaxy Black und leuchtendem Prusament Glow in the Dark sowie Neon Gelb. Das normale Gelb ist dunkler und wärmer.
-- Filamentrollen mit Standard Nozzle, Lenknozzle, Turbo oder Schild; Makercoins und Boost.
-- Seitliches Menü mit großer Benchy-Vorschau, Kartenpanorama, Druckanimation, Grafikoptionen und Musik.
-- Persönlicher Zieleinlauf mit automatischer Weiterfahrt und Live-Ergebnissen. Das Rennen läuft weiter, bis alle fertig oder ausgeschieden sind.
+## Im Spiel
 
-**Steuerung:** W/A/S/D oder Pfeile, Shift für Boost, Leertaste für Items, S + Leertaste für den Rückwärtsschuss, R zum letzten Kontrollpunkt, G für Grafik/Ton, F11 für Vollbild und Esc für das Menü. Gamepad wird unterstützt.
+- Drei Welten: Sonnendeck, Kupferhafen und Frostfjord, mit Flüssen, Kanälen, Felsen und Vegetation.
+- Einzelrennen und private Rennen mit bis zu acht Menschen.
+- Sieben Filamente mit Druckschichten, funkelndem Galaxy und leuchtendem Glow in the Dark sowie Neon Gelb.
+- Standard Nozzle, Lenknozzle, Turbo, Schild, Makercoins und Boost.
+- Große Bootsvorschau im Logo-Editor und bis zu acht unabhängig bearbeitbare PNG-Ebenen: Seiten, Deck und Heck, eigene Konturen und gespeicherte Designs.
+- Lobby-Chat und Live-Benchys mit Fahrernamen und übertragenen Logos. Späte Teilnehmer warten auf das nächste Rennen.
+- Zieleinlauf mit automatischer Weiterfahrt und Live-Ergebnissen, Druckanimation, Grafikoptionen und Musik.
 
 ## Mit Freunden spielen
 
-Alle verwenden Version 1.5.1. Ein Spieler erstellt eine Online-Lobby; oben im linken Auswahlmenü stehen seine Internet- und Heimnetz-/VPN-Adresse mit Kopierknöpfen. Er schickt die passende Adresse an seine Freunde; sie geben diese im Beitrittsfeld ein. **UDP-Port 7777** muss erreichbar sein. Im Heimnetz reicht die lokale Host-IP; über das Internet gegebenenfalls Router-/Firewallfreigabe oder ein gemeinsames privates VPN verwenden. Es gibt keine öffentliche Spielersuche, Relay-Server oder automatische Routerfreigabe.
+Alle brauchen Version 1.6.1. Der Gastgeber erstellt eine Online-Lobby und schickt den achtstelligen Code links im Menü. Freunde geben ihn unter „Mit Freunden verbinden“ ein. Diese Testausgabe integriert Epic Online Services für P2P-/Relay-Verbindungen ohne manuelle Routerfreigabe. Geräteanmeldung, Lobby-Erstellung und Host-Transport sind geprüft; eine vollständige Verbindung zwischen zwei verschiedenen PCs ist **noch nicht bestätigt**. Chat und Logo-Übertragung sind mit zwei lokalen Spielinstanzen geprüft. Beim Beenden des Gastgebers endet die Sitzung.
 
-Details stehen in der [aktuellen Spielanleitung](unreal/LIESMICH.md). Zwei getrennte lokale Spielprozesse wurden geprüft; Verbindungen über fremde Router sind noch nicht durchgängig getestet.
+## Quellcode
 
-## Quellcode und ältere Ausgabe
+Der aktuelle Spielcode, die Konfiguration ohne private EOS-Zugangsdaten und die Werkzeuge liegen unter [unreal](unreal). Das Projektarchiv im Release enthält zusätzliche eigene Assets. Separat lizenzierte Fab-/Electric-Dreams-Originalassets sind ausgeschlossen und müssen zum Bearbeiten aus der eigenen Bibliothek bereitgestellt werden. Entwicklung mit Unreal Engine 5.8.3. Die fertigen Windows-Downloads enthalten die benötigten Laufzeitassets.
 
-Der aktuelle C++-Spielcode, Konfiguration und Werkzeuge stehen unter [unreal](unreal). Das [Unreal-Projektarchiv](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.5.1/BenchyRacers-Unreal-Projekt.zip) enthält zusätzlich die eigenen Projektassets. Separat lizenzierte Originalassets aus Electric Dreams und Fab sind ausgeschlossen und müssen zum Bearbeiten aus der eigenen Bibliothek bereitgestellt werden. Die Anleitung und `unreal/FAB-ASSETS.md` beschreiben die Vorbereitung für Unreal Engine 5.8.3. Der fertige Windows-Download enthält alle zum Spielen benötigten Assets.
+Die ältere Godot-Ausgabe bleibt unter `work/game` und in den bisherigen Releases erhalten.
 
-Das ursprüngliche Godot-Projekt bleibt unter `work/game` erhalten. Sein [erstes Release v0.4.1](https://github.com/Wambo-20/BenchyRacers/releases/tag/v0.4.1) ist weiterhin verfügbar. Die Unreal- und Godot-Ausgaben sind im Mehrspielermodus nicht miteinander kompatibel.
+## Geplant
 
-## Geplant für kommende Updates
+Mehr Filamente und Hersteller, direkteres Platzieren der Logos mit der Maus sowie weitere Lobby-/Internetverbesserungen. Freies Bemalen ist derzeit nicht vorgesehen. Drag-and-drop aufs Boot ist noch nicht enthalten.
 
-- Mehr Filamente zur Auswahl: zusätzliche Hersteller, Farben und besondere Filament-Looks.
-- Eigenes Benchy frei bemalen und individuelle Designs gestalten.
-
-Weitere Filamente und freies Bemalen sind für kommende Updates geplant.
-
-## Prüfungen und Credits
-
-Version 1.5 wurde als Windows-Spiel gebaut und geprüft: komplette Rennen auf allen drei Karten, Navigation, Auftrieb, Rücksetzen, Items und Münzverlust, Filament-/Menüanimationen sowie Zieleinlauf und Ergebnisübertragung zwischen zwei Spielprozessen. Das Update 1.5.1 wurde zusätzlich mit sieben Filamenten, gelbem und grünem Eigenleuchten, Menüansichten, kopierbaren Adressen und zwei getrennten Spielprozessen geprüft. Prüfberichte stehen im Projektarchiv. Freies Bemalen des Benchys ist für später vorgemerkt.
+## Credits
 
 - Original #3DBenchy: Daniel Norée / Creative Tools, [CC0](https://www.3dbenchy.com/license/).
 - Naturmodelle und Texturen: [Poly Haven](https://polyhaven.com), CC0; Einzelquellen stehen im Projektarchiv.

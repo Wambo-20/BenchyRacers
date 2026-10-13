@@ -11,7 +11,7 @@
 #include "Engine/World.h"
 ABenchyRaceState::ABenchyRaceState(){ bReplicates=true; }
 void ABenchyRaceState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(ABenchyRaceState,Phase); DOREPLIFETIME(ABenchyRaceState,StartTime); DOREPLIFETIME(ABenchyRaceState,FirstFinishTime);DOREPLIFETIME(ABenchyRaceState,Results);
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(ABenchyRaceState,Phase); DOREPLIFETIME(ABenchyRaceState,StartTime); DOREPLIFETIME(ABenchyRaceState,FirstFinishTime);DOREPLIFETIME(ABenchyRaceState,Results);DOREPLIFETIME(ABenchyRaceState,LobbyChat);
 }
 float ABenchyRaceState::Clock() const{return GetServerWorldTimeSeconds()-StartTime;}
 void ABenchyRaceState::RegisterRacers(){
@@ -84,3 +84,5 @@ void ABenchyPickup::Tick(float DT){
         if(It->Collect(Kind)){Available=false;ReadyAt=T+(Kind?9.f:6.f);OnRep_Available();ForceNetUpdate();break;}
     }
 }
+
+void ABenchyRaceState::AddLobbyLine(const FString& Line){if(!HasAuthority())return;LobbyChat.Add(Line.Left(260));while(LobbyChat.Num()>30)LobbyChat.RemoveAt(0);ForceNetUpdate();}

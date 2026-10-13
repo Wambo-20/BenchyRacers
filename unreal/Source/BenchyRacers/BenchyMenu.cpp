@@ -1,4 +1,7 @@
 #include "BenchyMenu.h"
+#include "BenchyLogo.h"
+#include "BenchyOnline.h"
+#include "HAL/PlatformApplicationMisc.h"
 #include "BenchyFilaments.h"
 #include "BenchyAudit.h"
 #include "BenchyDisplay.h"
@@ -42,12 +45,13 @@ void UBenchyInstance::Init(){
     if(Address==TEXT("127.0.0.1"))Address.Reset();
     GConfig->GetFloat(TEXT("Benchy"),TEXT("Music"),MusicVolume,GGameUserSettingsIni);GConfig->GetInt(TEXT("Benchy"),TEXT("Color"),SelectedColor,GGameUserSettingsIni);
     GConfig->GetInt(TEXT("Benchy"),TEXT("Track"),SelectedTrack,GGameUserSettingsIni);SelectedTrack=FMath::Clamp(SelectedTrack,0,2);SelectedColor=FMath::Clamp(SelectedColor,0,BenchyFilaments::Count-1);
+    Logo=NewObject<UBenchyLogo>(this);Logo->Load();Online=NewObject<UBenchyOnline>(this);Online->Initialize();if(Online->Configured)Address.Reset();
     GEngine->OnNetworkFailure().AddUObject(this,&UBenchyInstance::NetworkFailure);GEngine->OnTravelFailure().AddUObject(this,&UBenchyInstance::TravelFailure);
 }
-void UBenchyInstance::Shutdown(){if(PublicAddressRequest.IsValid()){PublicAddressRequest->OnProcessRequestComplete().Unbind();PublicAddressRequest->CancelRequest();PublicAddressRequest.Reset();}GEngine->OnNetworkFailure().RemoveAll(this);GEngine->OnTravelFailure().RemoveAll(this);Super::Shutdown();}
+void UBenchyInstance::Shutdown(){if(Online)Online->Stop();if(PublicAddressRequest.IsValid()){PublicAddressRequest->OnProcessRequestComplete().Unbind();PublicAddressRequest->CancelRequest();PublicAddressRequest.Reset();}GEngine->OnNetworkFailure().RemoveAll(this);GEngine->OnTravelFailure().RemoveAll(this);Super::Shutdown();}
 void UBenchyInstance::SavePreferences(){GConfig->SetString(TEXT("Benchy"),TEXT("Name"),*Nick,GGameUserSettingsIni);GConfig->SetString(TEXT("Benchy"),TEXT("Address"),*Address,GGameUserSettingsIni);GConfig->SetFloat(TEXT("Benchy"),TEXT("Music"),MusicVolume,GGameUserSettingsIni);GConfig->SetInt(TEXT("Benchy"),TEXT("Color"),SelectedColor,GGameUserSettingsIni);GConfig->SetInt(TEXT("Benchy"),TEXT("Track"),SelectedTrack,GGameUserSettingsIni);GConfig->Flush(false,GGameUserSettingsIni);}
-void UBenchyInstance::NetworkFailure(UWorld* World,UNetDriver*,ENetworkFailure::Type,const FString& Error){if((FParse::Param(FCommandLine::Get(),TEXT("BenchyNetworkAudit"))||FParse::Param(FCommandLine::Get(),TEXT("BenchyTravelAudit"))||FParse::Param(FCommandLine::Get(),TEXT("BenchyNozzleNetworkAudit")))){FPlatformMisc::RequestExit(false);return;}Notice=TEXT("Verbindung getrennt oder nicht erreichbar: ")+Error.Left(160);if(World)UGameplayStatics::OpenLevel(World,TEXT("/Game/Maps/Sonnendeck"));}
-void UBenchyInstance::TravelFailure(UWorld*,ETravelFailure::Type,const FString& Error){Notice=TEXT("Strecke konnte nicht geladen werden: ")+Error.Left(160);}
+void UBenchyInstance::NetworkFailure(UWorld* World,UNetDriver*,ENetworkFailure::Type,const FString& Error){if((FParse::Param(FCommandLine::Get(),TEXT("BenchyNetworkAudit"))||FParse::Param(FCommandLine::Get(),TEXT("BenchyTravelAudit"))||FParse::Param(FCommandLine::Get(),TEXT("BenchyNozzleNetworkAudit")))){FPlatformMisc::RequestExit(false);return;}Notice=TEXT("Verbindung getrennt oder nicht erreichbar: ")+Error;IFileManager::Get().MakeDirectory(*(FPaths::ProjectSavedDir()/TEXT("Diagnostics")),true);FFileHelper::SaveStringToFile(Notice,*(FPaths::ProjectSavedDir()/TEXT("Diagnostics/Connection.txt")));if(Online)Online->Leave();if(World)UGameplayStatics::OpenLevel(World,TEXT("/Game/Maps/Sonnendeck"));}
+void UBenchyInstance::TravelFailure(UWorld*,ETravelFailure::Type,const FString& Error){Notice=TEXT("Strecke konnte nicht geladen werden: ")+Error;}
 void ABenchyController::BeginPlay(){
     Super::BeginPlay();PrimaryActorTick.bCanEverTick=true;
     if(!IsLocalController())return;
@@ -58,7 +62,7 @@ void ABenchyController::BeginPlay(){
 void ABenchyController::SetupInputComponent(){Super::SetupInputComponent();InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&ABenchyController::ToggleMenu).bExecuteWhenPaused=true;}
 void ABenchyController::EndPlay(const EEndPlayReason::Type Reason){HideMenu();Super::EndPlay(Reason);}
 void ABenchyController::Tick(float DT){
-    Super::Tick(DT);if(IsLocalController())AuditLobby();if(IsLocalController())BenchyValidateClient(this);if(!IsLocalController()||FParse::Param(FCommandLine::Get(),TEXT("BenchyAudit")))return;
+    Super::Tick(DT);TickSocial(DT);if(IsLocalController()){AuditLogo();AuditSocial();}if(IsLocalController())AuditLobby();if(IsLocalController())BenchyValidateClient(this);if(!IsLocalController()||FParse::Param(FCommandLine::Get(),TEXT("BenchyAudit")))return;
     auto S=GetWorld()->GetGameState<ABenchyRaceState>();if(!S)return;
     if(FParse::Param(FCommandLine::Get(),TEXT("BenchyShowroomAudit"))){
         static int Stage=0,Color=0;static float Next=0;static bool Printing=true,Materials=true,Travel=true,Restored=false,Intro=false;
@@ -90,9 +94,10 @@ void ABenchyController::Tick(float DT){
         if(T>90&&Stage!=14){FPlatformMisc::RequestExit(false);}
     }
     if(S->Phase==1){int Count=FMath::CeilToInt(-S->Clock());if(Count!=LastCountdown){LastCountdown=Count;if(auto B=Cast<ABenchyPawn>(GetPawn()))B->PlayCue_Implementation(4);}}
-    if(GetPawn() && NamedPawn.Get()!=GetPawn()){NamedPawn=GetPawn();if(auto I=GetGameInstance<UBenchyInstance>()){I->SelectedTrack=ABenchyWorld::ActiveTrack;ServerIdentity(I->Nick,I->SelectedColor);}}
+    if(GetPawn() && NamedPawn.Get()!=GetPawn()){NamedPawn=GetPawn();if(auto I=GetGameInstance<UBenchyInstance>()){I->SelectedTrack=ABenchyWorld::ActiveTrack;ServerIdentity(I->Nick,I->SelectedColor);ApplyLogo();SyncLogo();}}
     if(FParse::Param(FCommandLine::Get(),TEXT("BenchyRaceAudit"))||FParse::Param(FCommandLine::Get(),TEXT("BenchyGameplayAudit"))||FParse::Param(FCommandLine::Get(),TEXT("BenchyItemAudit"))||FParse::Param(FCommandLine::Get(),TEXT("BenchyNavigationAudit"))||FParse::Param(FCommandLine::Get(),TEXT("BenchyNozzleAudit"))||FParse::Param(FCommandLine::Get(),TEXT("BenchyFilamentAudit"))||FParse::Param(FCommandLine::Get(),TEXT("BenchyNozzleNetworkAudit")))return;
-    if(LastPhase!=S->Phase){LastPhase=S->Phase;if(S->Phase==0)ShowMenu();else HideMenu();}
+    if(LastPhase!=S->Phase){LastPhase=S->Phase;if(S->Phase==0||S->Phase==3)ShowMenu();else HideMenu();}
+    if(auto Waiting=Cast<ABenchyPawn>(GetPawn()))if(Waiting->WaitingForRace&&!MenuVisible())ShowMenu();
     if(auto B=Cast<ABenchyPawn>(GetPawn())){
         if(B->Finished&&!MenuVisible())ShowResults();else if(!B->Finished)HideResults();
     }
@@ -104,21 +109,21 @@ void ABenchyController::Tick(float DT){
     }else if(IntroCamera){if(GetPawn())SetViewTarget(GetPawn());IntroCamera->Destroy();IntroCamera=nullptr;}
 
 }
-void ABenchyController::HideMenu(){HideResults();if(Preview){if(GetPawn())SetViewTarget(GetPawn());Preview->Destroy();Preview=nullptr;}if(IsLocalController()&&GetNetMode()==NM_Standalone)UGameplayStatics::SetGamePaused(this,false);if(Panel.IsValid()&&GEngine&&GEngine->GameViewport)GEngine->GameViewport->RemoveViewportWidgetContent(Panel.ToSharedRef());Panel.Reset();AddressBox.Reset();NameBox.Reset();if(IsLocalController()){bShowMouseCursor=false;SetInputMode(FInputModeGameOnly());}}
+void ABenchyController::HideMenu(){ClearGallery();ChatBox.Reset();ChatScroll.Reset();HideResults();if(Preview){if(GetPawn())SetViewTarget(GetPawn());Preview->Destroy();Preview=nullptr;}if(IsLocalController()&&GetNetMode()==NM_Standalone)UGameplayStatics::SetGamePaused(this,false);if(Panel.IsValid()&&GEngine&&GEngine->GameViewport)GEngine->GameViewport->RemoveViewportWidgetContent(Panel.ToSharedRef());Panel.Reset();AddressBox.Reset();NameBox.Reset();if(IsLocalController()){bShowMouseCursor=false;SetInputMode(FInputModeGameOnly());}}
 void ABenchyController::ToggleMenu(){if(Panel.IsValid())HideMenu();else ShowMenu();}
 void ABenchyController::ServerStartRace_Implementation(){if(IsLocalController())if(auto M=GetWorld()->GetAuthGameMode<ABenchyGameMode>())M->StartRace();}
-void ABenchyController::ServerNewTrack_Implementation(int32 Track){auto S=GetWorld()->GetGameState<ABenchyRaceState>();if(IsLocalController()&&S&&(S->Phase==0||S->Phase==3)&&Track>=0&&Track<3)GetWorld()->ServerTravel(FString::Printf(TEXT("/Game/Maps/Sonnendeck?Track=%d?listen"),Track));}
+void ABenchyController::ServerNewTrack_Implementation(int32 Track){auto S=GetWorld()->GetGameState<ABenchyRaceState>();auto I=GetGameInstance<UBenchyInstance>();if(IsLocalController()&&S&&(S->Phase==0||S->Phase==3)&&Track>=0&&Track<3){if(I)I->CarriedChat=S->LobbyChat;FString Options=I&&I->Online&&!I->Online->RoomCode.IsEmpty()?TEXT("?RoomCode=")+I->Online->RoomCode:TEXT("");GetWorld()->ServerTravel(FString::Printf(TEXT("/Game/Maps/Sonnendeck?Track=%d?listen%s"),Track,*Options));}}
 void ABenchyController::StoreFields(){auto I=GetGameInstance<UBenchyInstance>();if(!I)return;if(NameBox.IsValid()){I->Nick=NameBox->GetText().ToString().Left(24);for(TCHAR& C:I->Nick)if(!FChar::IsAlnum(C)&&C!=' '&&C!='_')C='_';if(I->Nick.IsEmpty())I->Nick=TEXT("Maker");}if(AddressBox.IsValid())I->Address=AddressBox->GetText().ToString().TrimStartAndEnd();I->SavePreferences();}
 void ABenchyController::ShowMenu(int32 Page){
     if(!IsLocalController()||!GEngine->GameViewport)return;
-    auto ExistingPreview=Preview;Preview=nullptr;HideMenu();Preview=ExistingPreview;
+    auto ExistingPreview=Preview;Preview=nullptr;HideMenu();Preview=ExistingPreview;MenuPage=Page;
     if(auto B=Cast<ABenchyPawn>(GetPawn()))B->ServerControls(0,0,false);
     auto I=GetGameInstance<UBenchyInstance>();auto Settings=UGameUserSettings::GetGameUserSettings();if(!I)return;
     TSharedRef<SVerticalBox> List=SNew(SVerticalBox);
     auto Label=[&](const FString& T,int32 Size=16){List->AddSlot().AutoHeight().Padding(0,5)[SNew(STextBlock).Text(FText::FromString(T)).Font(FCoreStyle::GetDefaultFontStyle("Regular",Size)).ColorAndOpacity(FLinearColor(.85,.94,.95)).WrapTextAt(365)];};
     auto Button=[&](const FString& T,TFunction<void()> Fn){List->AddSlot().AutoHeight().Padding(0,4)[SNew(SButton).ContentPadding(FMargin(14,8)).ButtonColorAndOpacity(FLinearColor(.055,.19,.20)).OnClicked_Lambda([Fn](){Fn();return FReply::Handled();})[SNew(STextBlock).Text(FText::FromString(T)).AutoWrapText(true).Font(FCoreStyle::GetDefaultFontStyle("Bold",15)).ColorAndOpacity(FLinearColor::White)]];};
-    if(Page==0&&GetNetMode()==NM_ListenServer){Label(TEXT("BENCHY RACERS"),25);Label(TEXT("Dein Boot. Dein Rennen."),14);}else{Label(TEXT("BENCHY"),36);Label(TEXT("RACERS"),24);Label(Page==1?TEXT("Grafik & Ton"):TEXT("Dein Boot. Dein Rennen."),16);}
-    if(Page==1){
+    if(Page==2){Label(TEXT("LOGO-EDITOR"),24);}else if(Page==0&&GetNetMode()==NM_ListenServer){Label(TEXT("BENCHY RACERS"),25);Label(TEXT("Dein Boot. Dein Rennen."),14);}else{Label(TEXT("BENCHY"),36);Label(TEXT("RACERS"),24);Label(Page==1?TEXT("Grafik & Ton"):Page==2?TEXT("Logo-Editor · Ebenen"):TEXT("Dein Boot. Dein Rennen."),16);}
+    if(Page==2){List->AddSlot().AutoHeight()[BuildLogoEditor()];}else if(Page==1){
         static const TCHAR* Q[]={TEXT("Niedrig"),TEXT("Mittel"),TEXT("Hoch"),TEXT("Ultra")};int Quality=FMath::Clamp(Settings->GetOverallScalabilityLevel(),0,3);
         Button(FString(TEXT("Grafik: "))+(Settings->GetOverallScalabilityLevel()<0?TEXT("Benutzerdefiniert"):Q[Quality]),[this,Settings,Quality](){Settings->SetOverallScalabilityLevel((Quality+1)%4);Settings->ApplySettings(false);ShowMenu(1);});
         FIntPoint Size=Settings->GetScreenResolution();Button(FString::Printf(TEXT("Aufloesung: %d x %d"),Size.X,Size.Y),[this,Settings,Size](){FIntPoint Next=Size.X<1600?FIntPoint(1600,900):Size.X<1920?FIntPoint(1920,1080):Size.X<2560?FIntPoint(2560,1440):FIntPoint(1280,720);Settings->SetScreenResolution(Next);Settings->ApplySettings(false);ShowMenu(1);});
@@ -128,8 +133,8 @@ void ABenchyController::ShowMenu(int32 Page){
         Label(TEXT("Musiklautstaerke"));List->AddSlot().AutoHeight().Padding(0,10)[SNew(SSlider).Value(I->MusicVolume).OnValueChanged_Lambda([this,I](float V){I->MusicVolume=V;if(Music)Music->SetVolumeMultiplier(V);I->SavePreferences();})];
         Button(TEXT("Zurueck"),[this](){ShowMenu();});
     }else{
-        if(!I->Notice.IsEmpty())Label(I->Notice,14);
-        if(GetNetMode()==NM_ListenServer){I->RefreshLobbyAddresses(GetWorld());List->AddSlot().AutoHeight().Padding(0,5)[BuildLobbyInvite()];}
+        if(!I->Notice.IsEmpty()){Label(I->Notice,14);Button(TEXT("Fehlermeldung kopieren"),[I](){FPlatformApplicationMisc::ClipboardCopy(*I->Notice);});}if(I->Online&&!I->Online->Status.IsEmpty())Label(I->Online->Status,13);
+        if(GetNetMode()==NM_ListenServer){if(I->Online&&!I->Online->RoomCode.IsEmpty()){Label(TEXT("FREUNDE EINLADEN"),13);Label(TEXT("Lobby-Code: ")+I->Online->RoomCode,19);Button(TEXT("Lobby-Code kopieren"),[I](){FPlatformApplicationMisc::ClipboardCopy(*I->Online->RoomCode);});}else{I->RefreshLobbyAddresses(GetWorld());List->AddSlot().AutoHeight().Padding(0,5)[BuildLobbyInvite()];}}
         Label(TEXT("Fahrername"),14);List->AddSlot().AutoHeight()[SAssignNew(NameBox,SEditableTextBox).Text(FText::FromString(I->Nick))];
         Label(TEXT("WELT WÄHLEN"),12);
         for(int Track=0;Track<3;Track++)Button((I->SelectedTrack==Track?TEXT("●  "):TEXT("○  "))+ABenchyWorld::TrackName(Track),[this,Track](){SelectTrack(Track);});
@@ -145,9 +150,9 @@ void ABenchyController::ShowMenu(int32 Page){
         if(Active){Button(TEXT("Weiterfahren"),[this](){StoreFields();HideMenu();});Button(TEXT("Zum letzten Kontrollpunkt"),[this](){if(auto B=Cast<ABenchyPawn>(GetPawn()))B->ResetBoat();HideMenu();});}
         if(GetNetMode()==NM_Standalone) {
             Button(TEXT("Einzelrennen mit Gegnern starten"),[this,I](){StoreFields();UGameplayStatics::OpenLevel(this,TEXT("/Game/Maps/Sonnendeck"),true,FString::Printf(TEXT("Track=%d?AutoStart=1?Name=%s"),I->SelectedTrack,*I->Nick));});
-            Button(TEXT("Online-Lobby erstellen"),[this,I](){StoreFields();UGameplayStatics::OpenLevel(this,TEXT("/Game/Maps/Sonnendeck"),true,FString::Printf(TEXT("listen?Track=%d?Name=%s"),I->SelectedTrack,*I->Nick));});
-            Label(TEXT("Beitreten: Adresse vom Gastgeber"),14);List->AddSlot().AutoHeight()[SAssignNew(AddressBox,SEditableTextBox).Text(FText::FromString(I->Address)).HintText(FText::FromString(TEXT("IP-Adresse oder Hostname:7777")))];
-            Button(TEXT("Mit Freunden verbinden"),[this,I](){StoreFields();bool Valid=I->Address.Len()>0&&I->Address.Len()<254;for(TCHAR C:I->Address)Valid&=FChar::IsAlnum(C)||C=='.'||C=='-'||C==':';if(!Valid){I->Notice=TEXT("Bitte eine IP-Adresse oder einen Hostnamen eingeben.");ShowMenu();return;}I->Notice=TEXT("Verbindung wird aufgebaut ...");ClientTravel(I->Address+TEXT("?Name=")+I->Nick,TRAVEL_Absolute);});
+            Button(TEXT("Online-Lobby erstellen"),[this,I](){StoreFields();I->Online->Host();ShowMenu();});
+            Label(TEXT("Beitreten: Lobby-Code vom Gastgeber"),14);List->AddSlot().AutoHeight()[SAssignNew(AddressBox,SEditableTextBox).Text(FText::FromString(I->Address)).HintText(FText::FromString(TEXT("Achtstelliger Lobby-Code")))];
+            Button(TEXT("Mit Freunden verbinden"),[this,I](){StoreFields();I->Online->Join(I->Address);ShowMenu();});
         }else{
             List->AddSlot().AutoHeight().Padding(0,5)[SNew(STextBlock).Text_Lambda([this](){TArray<FString> Names;for(TActorIterator<ABenchyPawn> It(GetWorld());It;++It)if(!It->IsBot)Names.Add(It->RacerName);return FText::FromString(TEXT("Fahrer: ")+FString::Join(Names,TEXT(", ")));}).WrapTextAt(365).ColorAndOpacity(FLinearColor(.5,.9,.8))];
             Label(GetNetMode()==NM_ListenServer?TEXT("Lobby offen · Bis zu 8 Freunde"):TEXT("Verbunden. Der Host startet das Rennen."),15);
@@ -155,30 +160,33 @@ void ABenchyController::ShowMenu(int32 Page){
                 Button(State&&State->Phase==3?TEXT("Neues Rennen starten"):TEXT("Rennen gemeinsam starten"),[this](){StoreFields();ServerStartRace();});
                 Button(TEXT("Karte für alle wechseln"),[this,I](){StoreFields();ServerNewTrack(I->SelectedTrack);});
             }
-            Button(TEXT("Lobby verlassen"),[this](){UGameplayStatics::OpenLevel(this,TEXT("/Game/Maps/Sonnendeck"));});
+            Button(TEXT("Lobby verlassen"),[this,I](){if(I->Online)I->Online->Leave();UGameplayStatics::OpenLevel(this,TEXT("/Game/Maps/Sonnendeck"));});
         }
+        if(!Active)Button(TEXT("Logo-Editor (Test)"),[this](){StoreFields();ShowMenu(2);});
         Button(TEXT("Grafik & Ton"),[this](){StoreFields();ShowMenu(1);});
         Button(TEXT("Spiel beenden"),[this](){StoreFields();UKismetSystemLibrary::QuitGame(this,this,EQuitPreference::Quit,false);});
         Label(TEXT("WASD fahren · Leertaste Item · R zurücksetzen"),12);
     }
     auto State=GetWorld()->GetGameState<ABenchyRaceState>();
-    const bool Showroom=State&&(State->Phase==0||State->Phase==3);
+    const bool Showroom=State&&(State->Phase==0||State->Phase==3||(Cast<ABenchyPawn>(GetPawn())&&Cast<ABenchyPawn>(GetPawn())->WaitingForRace));
     if(Showroom&&!Preview){FVector At(27000,-34000,21500);
         Preview=GetWorld()->SpawnActor<ABenchyDisplay>(At,FRotator(0,77,0));Preview->SelectFilament(I->SelectedColor);
         auto C=Preview->FindComponentByClass<UCameraComponent>();if(C)Preview->SetActorRotation(FRotator(0,(-At).Rotation().Yaw-C->GetRelativeRotation().Yaw,0));}
-    if(Preview)SetViewTarget(Preview);
+    if(Preview){Preview->SetLogoEditor(Page==2,I->Logo&&I->Logo->ActiveLayer()?I->Logo->ActiveLayer()->Side:0);SetViewTarget(Preview);ApplyLogo();}
     FVector2D View(1600,900);GEngine->GameViewport->GetViewportSize(View);float Width=FMath::Clamp(View.X*.28f,330.f,420.f);
+    const bool Social=Showroom&&GetNetMode()!=NM_Standalone&&Page==0;if(Preview)Preview->SetLobbyLayout(Social,View.X/FMath::Max(1.f,View.Y));if(Preview&&Page==2)Preview->SetEditorLayout(I->Logo->ActiveLayer()?I->Logo->ActiveLayer()->Side:0,View.X/FMath::Max(1.f,View.Y));
     TSharedRef<SWidget> Detail=SNew(SVerticalBox)
         +SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(FText::FromString(TEXT("DEIN BENCHY"))).Font(FCoreStyle::GetDefaultFontStyle("Bold",24)).ColorAndOpacity(FLinearColor::White)]
         +SVerticalBox::Slot().AutoHeight().Padding(0,6)[SNew(STextBlock).Text_Lambda([this](){auto B=Cast<ABenchyPawn>(GetPawn());return FText::FromString(B?B->FilamentName():TEXT(""));}).Font(FCoreStyle::GetDefaultFontStyle("Regular",18)).ColorAndOpacity(FLinearColor(.65,.96,.89))]
         +SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text_Lambda([this](){return FText::FromString(Preview&&Preview->PrintProgress()<1?FString::Printf(TEXT("Wird gedruckt · %.0f %%"),Preview->PrintProgress()*100):TEXT("Bereit fürs Wasser"));}).Font(FCoreStyle::GetDefaultFontStyle("Regular",15)).ColorAndOpacity(FLinearColor(.85,.9,.94))];
     Panel=SNew(SOverlay)
-        +SOverlay::Slot().HAlign(HAlign_Left).VAlign(VAlign_Fill).Padding(22)[SNew(SBox).WidthOverride(Width)[SNew(SBorder).Padding(22).BorderBackgroundColor(FLinearColor(.012,.025,.035,.96))[SNew(SScrollBox)+SScrollBox::Slot()[List]]]]
+        +SOverlay::Slot().HAlign(HAlign_Left).VAlign(VAlign_Fill).Padding(22)[SNew(SBox).WidthOverride(Width)[SNew(SBorder).BorderImage(FCoreStyle::Get().GetBrush("WhiteBrush")).Padding(22).BorderBackgroundColor(FLinearColor(.012,.025,.035,.96))[SNew(SScrollBox)+SScrollBox::Slot()[List]]]]
         +SOverlay::Slot().HAlign(HAlign_Right).VAlign(VAlign_Top).Padding(35,30)
         [SNew(STextBlock).Visibility(Showroom?EVisibility::HitTestInvisible:EVisibility::Collapsed).Text(FText::FromString(TEXT("KARTENÜBERBLICK · ")+ABenchyWorld::TrackName(ABenchyWorld::ActiveTrack))).Font(FCoreStyle::GetDefaultFontStyle("Bold",19)).ColorAndOpacity(FLinearColor::White)]
         +SOverlay::Slot().HAlign(HAlign_Right).VAlign(VAlign_Bottom).Padding(35,25)
-        [SNew(SBox).WidthOverride(370.f)[SNew(SBorder).Visibility(Showroom?EVisibility::HitTestInvisible:EVisibility::Collapsed).Padding(20).BorderBackgroundColor(FLinearColor(.012,.025,.035,.94))[Detail]]];
+        [SNew(SBox).WidthOverride(370.f)[SNew(SBorder).Visibility(Showroom&&!Social&&Page!=2?EVisibility::HitTestInvisible:EVisibility::Collapsed).Padding(20).BorderBackgroundColor(FLinearColor(.012,.025,.035,.94))[Detail]]];
     if(GetNetMode()==NM_Standalone){if(State&&State->Phase==2)if(auto B=Cast<ABenchyPawn>(GetPawn()))if(!B->Finished)UGameplayStatics::SetGamePaused(this,true);}
+    if(Social){auto Overlay=StaticCastSharedPtr<SOverlay>(Panel);Overlay->AddSlot().HAlign(HAlign_Fill).VAlign(VAlign_Fill)[BuildLobbyGallery()];Overlay->AddSlot().HAlign(HAlign_Left).VAlign(VAlign_Top).Padding(Width+54,24,0,0)[SNew(SBox).WidthOverride(FMath::Clamp(View.X*.34f,320.f,550.f)).HeightOverride(FMath::Clamp(View.Y*.33f,200.f,330.f))[BuildChat()]];}
     GEngine->GameViewport->AddViewportWidgetContent(Panel.ToSharedRef(),100);bShowMouseCursor=true;FInputModeGameAndUI Mode;Mode.SetWidgetToFocus(Panel);Mode.SetHideCursorDuringCapture(false);SetInputMode(Mode);
 }
 

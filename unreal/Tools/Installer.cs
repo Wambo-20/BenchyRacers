@@ -8,14 +8,14 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using Microsoft.Win32;
 
-[assembly: AssemblyTitle("Benchy Racers Unreal Setup")]
-[assembly: AssemblyProduct("Benchy Racers Unreal")]
-[assembly: AssemblyVersion("1.5.1.0")]
+[assembly: AssemblyTitle("Benchy Racers Unreal Test Setup")]
+[assembly: AssemblyProduct("Benchy Racers Unreal Test")]
+[assembly: AssemblyVersion("1.6.1.0")]
 
 class Setup : Form {
-    static readonly string InstallDir=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Programs","Benchy Racers Unreal");
-    static readonly string StartDir=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs),"Benchy Racers Unreal");
-    static readonly string RegPath=@"Software\Microsoft\Windows\CurrentVersion\Uninstall\BenchyRacersUnreal";
+    static readonly string InstallDir=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Programs","Benchy Racers Unreal Test");
+    static readonly string StartDir=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs),"Benchy Racers Unreal Test");
+    static readonly string RegPath=@"Software\Microsoft\Windows\CurrentVersion\Uninstall\BenchyRacersUnrealTest";
     Label status=new Label(); Button action=new Button(); Button cancel=new Button();
     CheckBox desktop=new CheckBox();CheckBox launch=new CheckBox();ProgressBar progress=new ProgressBar();
     bool removal=false;bool installed=false;
@@ -47,7 +47,7 @@ class Setup : Form {
         }
         if(args.Length>0 && args[0]=="--remove") {
             System.Threading.Thread.Sleep(1500);
-            try { Remove(); MessageBox.Show("Benchy Racers Unreal wurde entfernt. Deine Einstellungen bleiben erhalten.","Benchy Racers Unreal",MessageBoxButtons.OK,MessageBoxIcon.Information); }
+            try { Remove(); MessageBox.Show("Benchy Racers Unreal Test wurde entfernt. Deine Einstellungen bleiben erhalten.","Benchy Racers Unreal Test",MessageBoxButtons.OK,MessageBoxIcon.Information); }
             catch(Exception e) { MessageBox.Show(e.Message,"Entfernen fehlgeschlagen",MessageBoxButtons.OK,MessageBoxIcon.Error); }
             return;
         }
@@ -59,13 +59,13 @@ class Setup : Form {
         Application.Run(new Setup(uninstall));
     }
     Setup(bool uninstall) {
-        removal=uninstall;Text="Benchy Racers Unreal · "+(uninstall?"Deinstallieren":"Installation");
+        removal=uninstall;Text="Benchy Racers Unreal Test · "+(uninstall?"Deinstallieren":"Installation");
         ClientSize=new Size(680,415);FormBorderStyle=FormBorderStyle.FixedDialog;MaximizeBox=false;StartPosition=FormStartPosition.CenterScreen;
         BackColor=Color.FromArgb(9,24,35);ForeColor=Color.FromArgb(237,248,251);Font=new Font("Segoe UI",11);
         try { Icon=Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location); }catch {}
         AddLabel("BENCHY RACERS",new Rectangle(34,28,600,48),27,Color.FromArgb(103,230,209));
         AddLabel(uninstall?"Das Spiel entfernen":"Dein Benchy wartet auf die Startlinie.",new Rectangle(36,86,605,40),17,ForeColor);
-        AddLabel(uninstall?"Entfernt Spiel und Verknüpfungen. Persönliche Einstellungen bleiben erhalten.":"Version 1.5.1 · Neon Gelb · Lobby-Adressen · sieben Filamente",new Rectangle(36,138,605,52),11,Color.FromArgb(154,181,195));
+        AddLabel(uninstall?"Entfernt Spiel und Verknüpfungen. Persönliche Einstellungen bleiben erhalten.":"Version 1.6.1 · Test · Logo-Ebenen · große Editor-Vorschau · Lobby-Chat",new Rectangle(36,138,605,52),11,Color.FromArgb(154,181,195));
         AddLabel("Spielordner",new Rectangle(36,192,600,25),10,Color.FromArgb(154,181,195));
         AddLabel(InstallDir,new Rectangle(36,222,600,40),10,ForeColor);
         desktop.Text="Verknüpfung auf dem Desktop";desktop.Checked=true;desktop.SetBounds(36,270,300,28);Controls.Add(desktop);
@@ -87,7 +87,7 @@ class Setup : Form {
     }
     void Begin(object sender,EventArgs evt) {
         if(installed){Close();return;}
-        if((Process.GetProcessesByName("BenchyRacers").Length>0 || Process.GetProcessesByName("BenchyRacers-Win64-Development").Length>0)){MessageBox.Show("Bitte Benchy Racers Unreal zuerst schließen.",Text);return;}
+        if((Process.GetProcessesByName("BenchyRacers").Length>0 || Process.GetProcessesByName("BenchyRacers-Win64-Development").Length>0)){MessageBox.Show("Bitte Benchy Racers Unreal Test zuerst schließen.",Text);return;}
         if(removal) {
             string temp=Path.Combine(Path.GetTempPath(),"BenchyRacers-Uninstall-"+Guid.NewGuid().ToString("N")+".exe");
             File.Copy(Assembly.GetExecutingAssembly().Location,temp);
@@ -114,11 +114,11 @@ class Setup : Form {
                 }
             }
             Directory.CreateDirectory(StartDir);
-            Shortcut(Path.Combine(StartDir,"Benchy Racers Unreal.lnk"),Path.Combine(InstallDir,"BenchyRacers.exe"),"");
-            Shortcut(Path.Combine(StartDir,"Benchy Racers Unreal deinstallieren.lnk"),Path.Combine(InstallDir,"Uninstall.exe"),"");
-            if(makeDesktop)Shortcut(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),"Benchy Racers Unreal.lnk"),Path.Combine(InstallDir,"BenchyRacers.exe"),"");
+            Shortcut(Path.Combine(StartDir,"Benchy Racers Unreal Test.lnk"),Path.Combine(InstallDir,"BenchyRacers.exe"),"");
+            Shortcut(Path.Combine(StartDir,"Benchy Racers Unreal Test deinstallieren.lnk"),Path.Combine(InstallDir,"Uninstall.exe"),"");
+            if(makeDesktop)Shortcut(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),"Benchy Racers Unreal Test.lnk"),Path.Combine(InstallDir,"BenchyRacers.exe"),"");
             using(RegistryKey key=Registry.CurrentUser.CreateSubKey(RegPath)){
-                key.SetValue("DisplayName","Benchy Racers Unreal");key.SetValue("DisplayVersion","1.5.1-unreal");
+                key.SetValue("DisplayName","Benchy Racers Unreal Test");key.SetValue("DisplayVersion","1.6.1-unreal");
                 key.SetValue("InstallLocation",InstallDir);key.SetValue("DisplayIcon",Path.Combine(InstallDir,"BenchyRacers.exe"));
                 key.SetValue("UninstallString","\""+Path.Combine(InstallDir,"Uninstall.exe")+"\"");
                 key.SetValue("NoModify",1,RegistryValueKind.DWord);key.SetValue("NoRepair",1,RegistryValueKind.DWord);
@@ -132,7 +132,7 @@ class Setup : Form {
         worker.RunWorkerCompleted+=(s,e)=>{
             action.Enabled=cancel.Enabled=true;
             if(e.Error!=null){status.Text="Installation fehlgeschlagen.";MessageBox.Show(e.Error.Message,Text,MessageBoxButtons.OK,MessageBoxIcon.Error);action.Text="Erneut versuchen";return;}
-            installed=true;status.Text="Fertig! Benchy Racers Unreal ist im Startmenü.";action.Text="Schließen";cancel.Visible=false;
+            installed=true;status.Text="Fertig! Benchy Racers Unreal Test ist im Startmenü.";action.Text="Schließen";cancel.Visible=false;
             if(run){Process.Start(new ProcessStartInfo(Path.Combine(InstallDir,"BenchyRacers.exe")){UseShellExecute=true,WorkingDirectory=InstallDir});Close();}
         };
         worker.RunWorkerAsync();
@@ -148,12 +148,12 @@ class Setup : Form {
         System.Runtime.InteropServices.Marshal.FinalReleaseComObject(link);System.Runtime.InteropServices.Marshal.FinalReleaseComObject(shell);
     }
     static void Remove() {
-        string expected=Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Programs","Benchy Racers Unreal"));
+        string expected=Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Programs","Benchy Racers Unreal Test"));
         if(!String.Equals(Path.GetFullPath(InstallDir),expected,StringComparison.OrdinalIgnoreCase))throw new Exception("Ungültiger Installationsordner.");
-        if((Process.GetProcessesByName("BenchyRacers").Length>0 || Process.GetProcessesByName("BenchyRacers-Win64-Development").Length>0))throw new Exception("Benchy Racers Unreal läuft noch. Bitte schließen und erneut deinstallieren.");
+        if((Process.GetProcessesByName("BenchyRacers").Length>0 || Process.GetProcessesByName("BenchyRacers-Win64-Development").Length>0))throw new Exception("Benchy Racers Unreal Test läuft noch. Bitte schließen und erneut deinstallieren.");
         if(Directory.Exists(InstallDir))Directory.Delete(InstallDir,true);
         if(Directory.Exists(StartDir))Directory.Delete(StartDir,true);
-        string shortcut=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),"Benchy Racers Unreal.lnk");
+        string shortcut=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),"Benchy Racers Unreal Test.lnk");
         if(File.Exists(shortcut))File.Delete(shortcut);
         Registry.CurrentUser.DeleteSubKeyTree(RegPath,false);
     }
