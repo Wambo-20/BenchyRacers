@@ -39,6 +39,11 @@
 #include "Misc/Paths.h"
 #include "HAL/FileManager.h"
 #include "Interfaces/IHttpRequest.h"
+#include "Interfaces/IHttpResponse.h"
+#include "HttpModule.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
+#include "HAL/PlatformProcess.h"
 
 void UBenchyInstance::Init(){
     Super::Init();GConfig->GetString(TEXT("Benchy"),TEXT("Name"),Nick,GGameUserSettingsIni);GConfig->GetString(TEXT("Benchy"),TEXT("Address"),Address,GGameUserSettingsIni);
@@ -56,6 +61,7 @@ void ABenchyController::BeginPlay(){
     Super::BeginPlay();PrimaryActorTick.bCanEverTick=true;
     if(!IsLocalController())return;
     auto I=GetGameInstance<UBenchyInstance>();
+    if(I)I->CheckForUpdate();
     if(auto Sound=LoadObject<USoundBase>(nullptr,TEXT("/Game/Audio/WakeRunner.WakeRunner")))Music=UGameplayStatics::SpawnSound2D(this,Sound,I?I->MusicVolume:.35f);
     FInputModeGameOnly Mode;SetInputMode(Mode);
 }
@@ -164,6 +170,10 @@ void ABenchyController::ShowMenu(int32 Page){
         }
         if(!Active)Button(TEXT("Logo-Editor (Test)"),[this](){StoreFields();ShowMenu(2);});
         Button(TEXT("Grafik & Ton"),[this](){StoreFields();ShowMenu(1);});
+#if PLATFORM_WINDOWS
+        List->AddSlot().AutoHeight().Padding(0,5)[SNew(STextBlock).Text_Lambda([I](){return FText::FromString(I->UpdateNotice);}).WrapTextAt(365).ColorAndOpacity(FLinearColor(.6,.96,.8))];
+        List->AddSlot().AutoHeight().Padding(0,4)[SNew(SButton).ContentPadding(FMargin(14,8)).OnClicked_Lambda([this,I](){if(I->UpdateVersion.IsEmpty()){I->CheckForUpdate();}else{StartUpdate();}return FReply::Handled();})[SNew(STextBlock).Text_Lambda([I](){return FText::FromString(I->UpdateVersion.IsEmpty()?TEXT("Nach Updates suchen"):TEXT("Jetzt aktualisieren (Spiel wird beendet)"));}).AutoWrapText(true).Font(FCoreStyle::GetDefaultFontStyle("Bold",15))]];
+#endif
         Button(TEXT("Spiel beenden"),[this](){StoreFields();UKismetSystemLibrary::QuitGame(this,this,EQuitPreference::Quit,false);});
         Label(TEXT("WASD fahren · Leertaste Item · R zurücksetzen"),12);
     }
@@ -206,4 +216,30 @@ void ABenchyController::SelectTrack(int32 Track){
         UGameplayStatics::OpenLevel(this,TEXT("/Game/Maps/Sonnendeck"),true,FString::Printf(TEXT("Track=%d?Name=%s"),I->SelectedTrack,*I->Nick));
     else if(GetNetMode()==NM_ListenServer&&S&&(S->Phase==0||S->Phase==3)&&ABenchyWorld::ActiveTrack!=I->SelectedTrack)ServerNewTrack(I->SelectedTrack);
     else ShowMenu();
+}
+
+void UBenchyInstance::CheckForUpdate(){
+#if PLATFORM_WINDOWS
+    if(UpdateChecking||GIsEditor)return;UpdateChecking=true;UpdateNotice=TEXT("Suche nach Updates ...");
+    auto Request=FHttpModule::Get().CreateRequest();Request->SetURL(TEXT("https://github.com/Wambo-20/BenchyRacers/releases/latest/download/UpdateManifest.json"));Request->SetVerb(TEXT("GET"));Request->SetTimeout(20);Request->SetHeader(TEXT("User-Agent"),TEXT("BenchyRacers/1.6.2"));
+    Request->OnProcessRequestComplete().BindWeakLambda(this,[this](FHttpRequestPtr,FHttpResponsePtr Response,bool Ok){UpdateChecking=false;TSharedPtr<FJsonObject> Data;FString Version;double Schema=0;
+        if(!Ok||!Response.IsValid()||Response->GetResponseCode()!=200||Response->GetContentLength()>1048576||!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Response->GetContentAsString()),Data)||!Data.IsValid()||!Data->TryGetStringField(TEXT("version"),Version)||!Data->TryGetNumberField(TEXT("schema"),Schema)||Schema!=1){UpdateNotice=TEXT("Update-Pruefung momentan nicht erreichbar. Du kannst weiter spielen.");return;}
+        TArray<FString> Parts;Version.ParseIntoArray(Parts,TEXT("."));if(Parts.Num()!=3){UpdateNotice=TEXT("Unbekanntes Update-Format.");return;}for(const auto& Part:Parts)if(!Part.IsNumeric()||Part.Len()>5){UpdateNotice=TEXT("Unbekanntes Update-Format.");return;}
+        const int64 Remote=FCString::Atoi64(*Parts[0])*10000000000LL+FCString::Atoi64(*Parts[1])*100000LL+FCString::Atoi64(*Parts[2]);
+        if(Remote>10000600002LL){UpdateVersion=Version;UpdateNotice=TEXT("Update verfuegbar: ")+Version;}else{UpdateVersion.Reset();UpdateNotice=TEXT("Version 1.6.2 ist aktuell.");}
+    });if(!Request->ProcessRequest()){UpdateChecking=false;UpdateNotice=TEXT("Update-Pruefung momentan nicht erreichbar.");}
+#endif
+}
+void ABenchyController::StartUpdate(){
+#if PLATFORM_WINDOWS
+    auto I=GetGameInstance<UBenchyInstance>();if(!I||I->UpdateVersion.IsEmpty()||GIsEditor)return;StoreFields();
+    const FString Root=FPaths::ConvertRelativePathToFull(FPaths::Combine(FPlatformProcess::BaseDir(),TEXT("../../../")));
+    const FString Helper=Root/TEXT("BenchyRacers-Updater.exe");
+    if(!IFileManager::Get().FileExists(*Helper)){I->UpdateNotice=TEXT("Updater fehlt. Bitte einmal den aktuellen Installer verwenden.");return;}
+    const FString Temporary=FPaths::Combine(FPlatformProcess::UserTempDir(),FString::Printf(TEXT("BenchyUpdater-%u.exe"),FPlatformProcess::GetCurrentProcessId()));
+    if(IFileManager::Get().Copy(*Temporary,*Helper)!=COPY_OK){I->UpdateNotice=TEXT("Updater konnte nicht vorbereitet werden.");return;}
+    const FString Args=FString::Printf(TEXT("--root \"%s\" --wait-pid %u"),*Root,FPlatformProcess::GetCurrentProcessId());
+    auto Process=FPlatformProcess::CreateProc(*Temporary,*Args,true,false,false,nullptr,0,*Root,nullptr);
+    if(!Process.IsValid()){I->UpdateNotice=TEXT("Updater konnte nicht gestartet werden.");return;}FPlatformProcess::CloseProc(Process);UKismetSystemLibrary::QuitGame(this,this,EQuitPreference::Quit,false);
+#endif
 }

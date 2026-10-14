@@ -35,6 +35,9 @@ public:
     TMap<FString,TArray<uint8>> LogoPNGs;
     TArray<FString> CarriedChat;
     void SavePreferences();
+    void CheckForUpdate();
+    FString UpdateVersion, UpdateNotice;
+    bool UpdateChecking=false;
     void RefreshLobbyAddresses(UWorld* World,bool Force=false);
     FString LobbyAddress(bool Internet) const;
     FString InternetAddressStatus() const;
@@ -119,4 +122,5 @@ private:
     int32 LastCountdown=-1;
     TWeakObjectPtr<APawn> NamedPawn;
     void StoreFields();
+    void StartUpdate();
 };

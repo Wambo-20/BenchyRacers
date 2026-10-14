@@ -143,12 +143,8 @@ void ABenchyPawn::Tick(float DT) {
     if(IsLocallyControlled())Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView,Time<ItemBoostUntil?94.f:84.f,DT,3.f));
     if(Audit) TickAudit(Time);
     if(!HasAuthority()) {
-        if(IsLocallyControlled()) {if(auto PC=Cast<ABenchyController>(Controller))if(PC->MenuVisible()){Throttle=0;Steering=0;Boost=false;}InputClock+=DT;if(InputClock>.05f){ServerControls(Throttle,Steering,Boost);InputClock=0;}}
-        if(!NetworkPosition.IsNearlyZero()) {
-            const bool Snap=!NetworkInitialized || FVector::DistSquared(GetActorLocation(),NetworkPosition)>25000000;
-            SetActorLocationAndRotation(Snap?NetworkPosition:FMath::VInterpTo(GetActorLocation(),NetworkPosition,DT,18),
-                Snap?NetworkRotation:FMath::RInterpTo(GetActorRotation(),NetworkRotation,DT,18));NetworkInitialized=true;
-        }
+        if(IsLocallyControlled()) {if(auto PC=Cast<ABenchyController>(Controller))if(PC->MenuVisible()){Throttle=0;Steering=0;Boost=false;}InputClock+=DT;if(InputClock>1.f/30.f){ServerControls(Throttle,Steering,Boost);InputClock=0;}}
+        SmoothNetworkPose(DT,Time);
         UpdateWake(DT,Time); return;
     }
     auto Race=GetWorld()->GetGameState<ABenchyRaceState>();
@@ -206,7 +202,7 @@ void ABenchyPawn::Tick(float DT) {
         if(StuckTime>4)ResetBoat();
     }
     PreviousCoursePosition=GetActorLocation();CoursePositionInitialized=true;
-    PoseClock+=DT;if(PoseClock>.033f){NetworkPosition=GetActorLocation();NetworkRotation=GetActorRotation();NetworkSpeed=SpeedKmh();PoseClock=0;}
+    PoseClock+=DT;if(PoseClock>=1.f/30.f){PublishNetworkPose();PoseClock=0;}
 
     UpdateWake(DT,Time);
     if(GetActorLocation().Z<-2000) ResetBoat();
@@ -269,7 +265,7 @@ void ABenchyPawn::ResetBoat() {
     Hull->SetPhysicsLinearVelocity(FVector::ZeroVector);Hull->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
     SetActorLocationAndRotation(ResetPosition,ResetRotation,false,nullptr,ETeleportType::TeleportPhysics);
     PreviousCoursePosition=ResetPosition;CoursePositionInitialized=true;MissedCheckpoint=false;
-    RespawnUntil=T+2;NetworkPosition=ResetPosition;NetworkRotation=ResetRotation;NetworkSpeed=0;ForceNetUpdate();
+    RespawnUntil=T+2;NetworkPosition=ResetPosition;NetworkRotation=ResetRotation;NetworkSpeed=0;PublishNetworkPose(true);ForceNetUpdate();
 }
 void ABenchyPawn::ServerReset_Implementation(){ResetBoat();}
 void ABenchyPawn::ServerControls_Implementation(float Gas,float Turn,bool Boosting){
@@ -281,7 +277,7 @@ void ABenchyPawn::BeginRace(int32 Slot){
     ItemEventTime=-100;ItemEvent=0;ItemNoticeText.Empty();LastShotTarget.Empty();LastShotBackward=false;
     Passed=0;NextGate=1;Lap=1;Coins=0;Item=0;RaceTime=0;Finished=false;FinishPlace=0;ShieldUntil=0;StunUntil=0;ItemBoostUntil=0;NextResetTime=0;
     ResetBoat();FVector P=GetActorLocation();FVector F=GetActorForwardVector();P+=GetActorRightVector()*((Slot%2)*2-1)*320-F*(Slot/2)*470;
-    SetActorLocation(P,false,nullptr,ETeleportType::TeleportPhysics);NetworkPosition=P;
+    SetActorLocation(P,false,nullptr,ETeleportType::TeleportPhysics);NetworkPosition=P;PublishNetworkPose(true);
 }
 bool ABenchyPawn::Collect(int32 Kind){
     if(!HasAuthority()||Finished||WaitingForRace)return false;
@@ -333,7 +329,7 @@ void ABenchyPawn::AuditPose(FVector Position,FRotator Rotation,int32 ProgressPas
     if(!HasAuthority())return;SetActorLocationAndRotation(Position,Rotation,false,nullptr,ETeleportType::TeleportPhysics);
     Hull->SetPhysicsLinearVelocity(FVector::ZeroVector);Hull->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
     Passed=ProgressPassed;NextGate=BenchyRules::Next(Passed);Lap=BenchyRules::Lap(Passed);Finished=false;MissedCheckpoint=false;
-    PreviousCoursePosition=Position;CoursePositionInitialized=true;NetworkPosition=Position;NetworkRotation=Rotation;ForceNetUpdate();
+    PreviousCoursePosition=Position;CoursePositionInitialized=true;NetworkPosition=Position;NetworkRotation=Rotation;PublishNetworkPose(true);ForceNetUpdate();
 }
 float ABenchyPawn::Progress() const {
     if(Finished)return 1000-FinishPlace;
@@ -386,7 +382,7 @@ void ABenchyPawn::DriveFinished(float DT){
         FRotator R=(ABenchyWorld::RoutePoint(PostFinishCursor+1)-At).Rotation();R.Pitch=0;R.Roll=0;
         Hull->SetPhysicsLinearVelocity(FVector::ZeroVector);Hull->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
         SetActorLocationAndRotation(At,R,false,nullptr,ETeleportType::TeleportPhysics);History.Reset();StuckTime=0;
-        NetworkPosition=At;NetworkRotation=R;ForceNetUpdate();
+        NetworkPosition=At;NetworkRotation=R;PublishNetworkPose(true);ForceNetUpdate();
     }
 }
 void ABenchyPawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const{
@@ -398,7 +394,7 @@ void ABenchyPawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
     DOREPLIFETIME(ABenchyPawn,LastShotBackward);DOREPLIFETIME(ABenchyPawn,LastShotTarget);
     DOREPLIFETIME(ABenchyPawn,RacerName);DOREPLIFETIME(ABenchyPawn,IsBot);DOREPLIFETIME(ABenchyPawn,ShieldUntil);DOREPLIFETIME(ABenchyPawn,StunUntil);
     DOREPLIFETIME(ABenchyPawn,RespawnUntil);DOREPLIFETIME(ABenchyPawn,ItemBoostUntil);DOREPLIFETIME(ABenchyPawn,NetworkSpeed);
-    DOREPLIFETIME(ABenchyPawn,NetworkPosition);DOREPLIFETIME(ABenchyPawn,NetworkRotation);DOREPLIFETIME(ABenchyPawn,ColorIndex);
+    DOREPLIFETIME(ABenchyPawn,NetworkPose);DOREPLIFETIME(ABenchyPawn,ColorIndex);
 }
 
 void ABenchyPawn::TickAudit(float Time) {

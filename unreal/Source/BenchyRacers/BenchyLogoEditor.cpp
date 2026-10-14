@@ -13,6 +13,7 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
+#include "BenchyFilePicker.h"
 #if PLATFORM_WINDOWS
 #include "Windows/AllowWindowsPlatformTypes.h"
 #include <windows.h>
@@ -33,6 +34,8 @@ void ABenchyController::ImportLogo(){
     Dialog.lpstrFilter=L"PNG-Logo (*.png)\0*.png\0\0";Dialog.lpstrFile=File;Dialog.nMaxFile=32768;Dialog.lpstrTitle=L"Dein PNG-Logo wählen";
     Dialog.Flags=OFN_FILEMUSTEXIST|OFN_PATHMUSTEXIST|OFN_NOCHANGEDIR|OFN_EXPLORER;
     if(GetOpenFileNameW(&Dialog)){auto I=GetGameInstance<UBenchyInstance>();if(I&&I->Logo){I->Logo->AddLayer(FString(File));ApplyLogo();ShowMenu(2);}}
+#elif PLATFORM_MAC
+    FString Path;if(BenchyChoosePNG(Path)){auto I=GetGameInstance<UBenchyInstance>();if(I&&I->Logo){I->Logo->AddLayer(Path);ApplyLogo();ShowMenu(2);}}
 #endif
 }
 TSharedRef<SWidget> ABenchyController::BuildLogoEditor(){

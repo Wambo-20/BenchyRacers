@@ -10,7 +10,7 @@ using Microsoft.Win32;
 
 [assembly: AssemblyTitle("Benchy Racers Unreal Test Setup")]
 [assembly: AssemblyProduct("Benchy Racers Unreal Test")]
-[assembly: AssemblyVersion("1.6.1.0")]
+[assembly: AssemblyVersion("1.6.2.0")]
 
 class Setup : Form {
     static readonly string InstallDir=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Programs","Benchy Racers Unreal Test");
@@ -65,7 +65,7 @@ class Setup : Form {
         try { Icon=Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location); }catch {}
         AddLabel("BENCHY RACERS",new Rectangle(34,28,600,48),27,Color.FromArgb(103,230,209));
         AddLabel(uninstall?"Das Spiel entfernen":"Dein Benchy wartet auf die Startlinie.",new Rectangle(36,86,605,40),17,ForeColor);
-        AddLabel(uninstall?"Entfernt Spiel und Verknüpfungen. Persönliche Einstellungen bleiben erhalten.":"Version 1.6.1 · Test · Logo-Ebenen · große Editor-Vorschau · Lobby-Chat",new Rectangle(36,138,605,52),11,Color.FromArgb(154,181,195));
+        AddLabel(uninstall?"Entfernt Spiel und Verknüpfungen. Persönliche Einstellungen bleiben erhalten.":"Version 1.6.2 · Online-Bewegung · Logo-Ebenen · Lobby-Chat",new Rectangle(36,138,605,52),11,Color.FromArgb(154,181,195));
         AddLabel("Spielordner",new Rectangle(36,192,600,25),10,Color.FromArgb(154,181,195));
         AddLabel(InstallDir,new Rectangle(36,222,600,40),10,ForeColor);
         desktop.Text="Verknüpfung auf dem Desktop";desktop.Checked=true;desktop.SetBounds(36,270,300,28);Controls.Add(desktop);
@@ -118,7 +118,7 @@ class Setup : Form {
             Shortcut(Path.Combine(StartDir,"Benchy Racers Unreal Test deinstallieren.lnk"),Path.Combine(InstallDir,"Uninstall.exe"),"");
             if(makeDesktop)Shortcut(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),"Benchy Racers Unreal Test.lnk"),Path.Combine(InstallDir,"BenchyRacers.exe"),"");
             using(RegistryKey key=Registry.CurrentUser.CreateSubKey(RegPath)){
-                key.SetValue("DisplayName","Benchy Racers Unreal Test");key.SetValue("DisplayVersion","1.6.1-unreal");
+                key.SetValue("DisplayName","Benchy Racers Unreal Test");key.SetValue("DisplayVersion","1.6.2-unreal");
                 key.SetValue("InstallLocation",InstallDir);key.SetValue("DisplayIcon",Path.Combine(InstallDir,"BenchyRacers.exe"));
                 key.SetValue("UninstallString","\""+Path.Combine(InstallDir,"Uninstall.exe")+"\"");
                 key.SetValue("NoModify",1,RegistryValueKind.DWord);key.SetValue("NoRepair",1,RegistryValueKind.DWord);

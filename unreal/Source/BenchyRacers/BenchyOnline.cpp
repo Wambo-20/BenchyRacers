@@ -45,7 +45,7 @@ using FContext=TWeakObjectPtr<UBenchyOnline>;
 FContext* Context(UBenchyOnline* O){return new FContext(O);}
 UBenchyOnline* Resolve(void* Data){TUniquePtr<FContext> C(static_cast<FContext*>(Data));return C->Get();}
 UBenchyInstance* Instance(UBenchyOnline* O){return Cast<UBenchyInstance>(O->GetOuter());}
-const char* Bucket="BenchyRacers-1.6.1";
+const char* Bucket="BenchyRacers-1.6.2";
 }
 UBenchyOnline::UBenchyOnline(){}
 UBenchyOnline::~UBenchyOnline(){}
@@ -64,7 +64,12 @@ void UBenchyOnline::Stop(){Configured=false;Busy=false;EOS.Reset();}
 void UBenchyOnline::Host(){if(Busy)return;if(!Configured){Instance(this)->Notice=Status;return;}Leave();PendingHost=true;Busy=true;RoomCode=FGuid::NewGuid().ToString(EGuidFormats::Digits).Left(8).ToUpper();Status=TEXT("Online-Lobby wird erstellt …");if(EOS->User)CreateRoom();else Login();}
 void UBenchyOnline::Join(FString Code){Code.TrimStartAndEndInline();Code=Code.Replace(TEXT("-"),TEXT("")).ToUpper();if(Code.Len()!=8){Instance(this)->Notice=TEXT("Bitte den 8-stelligen Lobby-Code eingeben.");return;}for(TCHAR C:Code)if(!FChar::IsHexDigit(C)){Instance(this)->Notice=TEXT("Ungültiger Lobby-Code.");return;}if(Busy)return;if(!Configured){Instance(this)->Notice=Status;return;}Leave();RoomCode=Code;PendingHost=false;Busy=true;Status=TEXT("Lobby wird gesucht …");if(EOS->User)FindRoom();else Login();}
 void UBenchyOnline::Login(){
-    EOS_Connect_CreateDeviceIdOptions O={};O.ApiVersion=EOS_CONNECT_CREATEDEVICEID_API_LATEST;O.DeviceModel="Benchy Racers Windows";
+    EOS_Connect_CreateDeviceIdOptions O={};O.ApiVersion=EOS_CONNECT_CREATEDEVICEID_API_LATEST;
+#if PLATFORM_MAC
+    O.DeviceModel="Benchy Racers Mac";
+#else
+    O.DeviceModel="Benchy Racers Windows";
+#endif
     EOS_Connect_CreateDeviceId(EOS->Connect,&O,Context(this),[](const EOS_Connect_CreateDeviceIdCallbackInfo* R){auto Self=Resolve(R->ClientData);if(!Self||!Self->EOS)return;if(R->ResultCode!=EOS_EResult::EOS_Success&&R->ResultCode!=EOS_EResult::EOS_DuplicateNotAllowed){Self->Fail(TEXT("Geräteanmeldung"),int32(R->ResultCode));return;}
         EOS_Connect_Credentials Credentials={};Credentials.ApiVersion=EOS_CONNECT_CREDENTIALS_API_LATEST;Credentials.Type=EOS_EExternalCredentialType::EOS_ECT_DEVICEID_ACCESS_TOKEN;
         FTCHARToUTF8 Nick(*Instance(Self)->Nick);EOS_Connect_UserLoginInfo Info={};Info.ApiVersion=EOS_CONNECT_USERLOGININFO_API_LATEST;Info.DisplayName=Nick.Get();EOS_Connect_LoginOptions Login={};Login.ApiVersion=EOS_CONNECT_LOGIN_API_LATEST;Login.Credentials=&Credentials;Login.UserLoginInfo=&Info;

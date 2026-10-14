@@ -20,6 +20,16 @@ struct FBenchyWakePoint {
     float Speed=0;
 };
 
+USTRUCT()
+struct FBenchyNetPose {
+    GENERATED_BODY()
+    UPROPERTY() FVector Position=FVector::ZeroVector;
+    UPROPERTY() FVector Velocity=FVector::ZeroVector;
+    UPROPERTY() FRotator Rotation=FRotator::ZeroRotator;
+    UPROPERTY() float Time=-1;
+    UPROPERTY() uint32 Generation=0;
+};
+
 UCLASS()
 class BENCHYRACERS_API ABenchyPawn : public APawn {
     GENERATED_BODY()
@@ -51,8 +61,10 @@ public:
     UPROPERTY(Replicated) float RespawnUntil=0;
     UPROPERTY(Replicated) float ItemBoostUntil=0;
     UPROPERTY(Replicated) float NetworkSpeed=0;
-    UPROPERTY(Replicated) FVector NetworkPosition;
-    UPROPERTY(Replicated) FRotator NetworkRotation;
+    FVector NetworkPosition;
+    FRotator NetworkRotation;
+    UPROPERTY(ReplicatedUsing=OnRep_NetworkPose) FBenchyNetPose NetworkPose;
+    UFUNCTION() void OnRep_NetworkPose();
     UPROPERTY(ReplicatedUsing=OnRep_Color) int32 ColorIndex=0;
     UFUNCTION() void OnRep_Color();
     UFUNCTION(Server,Reliable) void ServerReset();
@@ -100,6 +112,9 @@ private:
     float InputClock=0, PoseClock=0, LastInputTime=0, StuckTime=0, NextResetTime=0, BotItemTime=0;
     float PostFinishCursor=0;
     bool NetworkInitialized=false;
+    TArray<FBenchyNetPose> NetworkSamples;
+    void PublishNetworkPose(bool Teleport=false);
+    void SmoothNetworkPose(float DT,float ServerTime);
     FVector ResetPosition;
     FVector PreviousCoursePosition;
     bool CoursePositionInitialized=false;

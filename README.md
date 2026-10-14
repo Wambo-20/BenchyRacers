@@ -1,12 +1,16 @@
 # Benchy Racers
 
-Installierbares 3D-Wasser-Rennspiel für Windows mit dem originalen #3DBenchy. Aktuelles Update: **1.6.1 – Logo-Ebenen und Lobby (Testausgabe)**.
+Installierbares 3D-Wasser-Rennspiel für Windows mit dem originalen #3DBenchy. Aktuelles Update: **1.6.2 – Online-Bewegung und Ingame-Updater**.
 
-## Download
+## Download und Update
 
-[Windows-Installer 1.6.1](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.1/BenchyRacers-1.6.1-Test-Setup.exe) oder [Portable-ZIP](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.1/BenchyRacers-1.6.1-Test-Portable.zip). Nach der Installation **Benchy Racers Unreal Test** starten. Die Testausgabe besitzt einen eigenen Installationsordner; Version 1.5.1 bleibt separat erhalten. Windows 64 Bit und DirectX 12 sind erforderlich, Unreal Engine und Epic Games Launcher nicht.
+[Windows-Installer 1.6.2](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.2/BenchyRacers-1.6.2-Setup.exe).
 
-[Release-Details, Projektarchiv und Prüfsummen](https://github.com/Wambo-20/BenchyRacers/releases/tag/v1.6.1).
+Bereits Version 1.6.1 installiert? [Kleinen Updater herunterladen](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.2/BenchyRacers-Updater.exe) und bei geschlossenem Spiel starten: Das Teilupdate braucht etwa **126 MB**, der ganze Installer etwa 1,21 GB. Portable-Spieler waehlen ihren Spielordner.
+
+Ab 1.6.2 prueft das Spiel im linken Hauptmenue auf Updates. „Jetzt aktualisieren“ beendet das Spiel, installiert das Teilupdate mit geprueften Dateien und startet es wieder. Logos und Einstellungen bleiben erhalten. Fuer deutlich aeltere oder veraenderte Installationen den vollen Installer verwenden. Alle Mitspieler brauchen die gleiche Version.
+
+[Release-Details und Pruefsummen](https://github.com/Wambo-20/BenchyRacers/releases/tag/v1.6.2). Windows 64 Bit und DirectX 12. Unreal Engine und Epic Games Launcher sind zum Spielen nicht erforderlich. Gestartet wird weiterhin die Installation „Benchy Racers Unreal Test“; die aeltere separate Installation bleibt bestehen.
 
 ## Im Spiel
 
@@ -20,7 +24,7 @@ Installierbares 3D-Wasser-Rennspiel für Windows mit dem originalen #3DBenchy. A
 
 ## Mit Freunden spielen
 
-Alle brauchen Version 1.6.1. Der Gastgeber erstellt eine Online-Lobby und schickt den achtstelligen Code links im Menü. Freunde geben ihn unter „Mit Freunden verbinden“ ein. Diese Testausgabe integriert Epic Online Services für P2P-/Relay-Verbindungen ohne manuelle Routerfreigabe. Geräteanmeldung, Lobby-Erstellung und Host-Transport sind geprüft; eine vollständige Verbindung zwischen zwei verschiedenen PCs ist **noch nicht bestätigt**. Chat und Logo-Übertragung sind mit zwei lokalen Spielinstanzen geprüft. Beim Beenden des Gastgebers endet die Sitzung.
+Alle brauchen Version 1.6.2. Der Gastgeber erstellt eine Online-Lobby und schickt den achtstelligen Code links im Menü. Freunde geben ihn unter „Mit Freunden verbinden“ ein. Diese Testausgabe integriert Epic Online Services für P2P-/Relay-Verbindungen ohne manuelle Routerfreigabe. Geräteanmeldung, Lobby-Erstellung und Host-Transport sind geprüft; eine vollständige Verbindung zwischen zwei verschiedenen PCs ist **noch nicht bestätigt**. Chat und Logo-Übertragung sind mit zwei lokalen Spielinstanzen geprüft. Beim Beenden des Gastgebers endet die Sitzung.
 
 ## Quellcode
 
