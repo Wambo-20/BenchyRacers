@@ -15,7 +15,9 @@ with zipfile.ZipFile(out/'BenchyRacers-1.6.2-Portable.zip') as payload,zipfile.Z
   with payload.open(name) as src,z.open(name,'w',force_zip64=True) as dst:
    while b:=src.read(1048576):dst.write(b)
 files=[{'path':k,'bytes':new[k][0],'sha256':new[k][1],'oldSha256':old.get(k,[None,None])[1]} for k in changed]
-manifest={'schema':1,'version':'1.6.2','patches':[{'fromVersion':'1.6.1','url':'https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.2/'+patch.name,'bytes':patch.stat().st_size,'sha256':sha(patch),'files':files}]}
+with zipfile.ZipFile(root/'outputs/BenchyRacers-v1.6.1-Test/BenchyRacers-1.6.1-Test-Portable.zip') as base:
+ base_version=json.loads(base.read('BuildStatus.json'))['version']
+manifest={'schema':1,'version':'1.6.2','patches':[{'fromVersion':base_version,'url':'https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.2/'+patch.name,'bytes':patch.stat().st_size,'sha256':sha(patch),'files':files}]}
 (out/'UpdateManifest.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
 with zipfile.ZipFile(patch) as z:
  for f in files:

@@ -4,7 +4,7 @@ Installierbares 3D-Wasser-Rennspiel für Windows mit dem originalen #3DBenchy. A
 
 ## Download und Update
 
-Neuinstallation: zuerst [Windows-Installer 1.6.1](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.1/BenchyRacers-1.6.1-Test-Setup.exe) installieren, danach mit dem unten verlinkten kleinen Updater auf 1.6.2 aktualisieren. Dieses Release liefert zunächst das Teilupdate; ein neuer vollständiger Installer wartet noch auf die Freigabe für seine Online-Client-Konfiguration.
+[Windows-Installer 1.6.2](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.2/BenchyRacers-1.6.2-Setup.exe).
 
 Bereits Version 1.6.1 installiert? [Kleinen Updater herunterladen](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.2/BenchyRacers-Updater.exe) und bei geschlossenem Spiel starten: Das Teilupdate braucht etwa **126 MB**, der ganze Installer etwa 1,21 GB. Portable-Spieler waehlen ihren Spielordner.
 
