@@ -28,7 +28,7 @@ Alle brauchen Version 1.6.2. Der Gastgeber erstellt eine Online-Lobby und schick
 
 ## Quellcode
 
-Der aktuelle Spielcode, die Konfiguration ohne private EOS-Zugangsdaten und die Werkzeuge liegen unter [unreal](unreal). Das Projektarchiv im Release enthält zusätzliche eigene Assets. Separat lizenzierte Fab-/Electric-Dreams-Originalassets sind ausgeschlossen und müssen zum Bearbeiten aus der eigenen Bibliothek bereitgestellt werden. Entwicklung mit Unreal Engine 5.8.3. Die fertigen Windows-Downloads enthalten die benötigten Laufzeitassets.
+Der aktuelle Spielcode, die Konfiguration ohne private EOS-Zugangsdaten und die Werkzeuge liegen unter [unreal](unreal). Das Quellcodearchiv dieses Releases enthält Code, Konfiguration und Werkzeuge. Zusätzliche eigene Assets sind im Projektarchiv von Release 1.6.1 enthalten. Separat lizenzierte Fab-/Electric-Dreams-Originalassets sind ausgeschlossen und müssen zum Bearbeiten aus der eigenen Bibliothek bereitgestellt werden. Entwicklung mit Unreal Engine 5.8.3. Die fertigen Windows-Downloads enthalten die benötigten Laufzeitassets.
 
 Die ältere Godot-Ausgabe bleibt unter `work/game` und in den bisherigen Releases erhalten.
 
