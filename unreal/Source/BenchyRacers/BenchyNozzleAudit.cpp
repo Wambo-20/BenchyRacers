@@ -89,22 +89,22 @@ void BenchyValidateNozzles(ABenchyGameMode* Mode){
         if(Stage==1&&T>6){auto M=Filament(B);Printed=M&&M->K2_GetScalarParameterValue(TEXT("Printed"))==1&&M->K2_GetScalarParameterValue(TEXT("LayerPitch"))>0;Shot(TEXT("Printed-Orange"));Stage=2;}
         if(Stage==2&&T>7){B->ServerColor_Implementation(0);Stage=3;}
         if(Stage==3&&T>8){Shot(TEXT("Printed-Black"));B->ServerColor_Implementation(4);Stage=4;}
-        if(Stage==4&&T>10){auto M=Filament(B);Galaxy=M&&M->K2_GetScalarParameterValue(TEXT("Galaxy"))==1&&B->FilamentName().Contains(TEXT("Prusament"));Shot(TEXT("Prusament-Galaxy"));Stage=5;}
+        if(Stage==4&&T>10){auto M=Filament(B);Galaxy=M&&M->K2_GetScalarParameterValue(TEXT("Galaxy"))==1&&B->FilamentName()==TEXT("Sternenstaub Schwarz");Shot(TEXT("Sternenstaub"));Stage=5;}
         if(Stage==5&&T>10.6f){Camera->AddActorWorldOffset(B->GetActorRightVector()*65);Camera->SetActorRotation((B->GetActorLocation()+FVector(0,0,100)-Camera->GetActorLocation()).Rotation());Stage=6;}
-        if(Stage==6&&T>11.4f){Shot(TEXT("Prusament-Galaxy-Glint"));Stage=61;Next=T+.4f;}
+        if(Stage==6&&T>11.4f){Shot(TEXT("Sternenstaub-Glanz"));Stage=61;Next=T+.4f;}
         // Screenshot requests are captured on the next render frame. Keep Galaxy
         // active until that frame has completed, then switch to Glow.
         if(Stage==61&&T>Next){B->ServerColor_Implementation(5);Stage=7;}
-        if(Stage==7&&T>13){auto M=Filament(B);Glow=M&&M->K2_GetScalarParameterValue(TEXT("Glow"))==1&&B->FilamentName().Contains(TEXT("Glow in the Dark"));Shot(TEXT("Glow-Day"));Stage=8;}
+        if(Stage==7&&T>13){auto M=Filament(B);Glow=M&&M->K2_GetScalarParameterValue(TEXT("Glow"))==1&&B->FilamentName()==TEXT("Glühwürmchengrün");Shot(TEXT("Glow-Day"));Stage=8;}
         if(Stage==8&&T>14){auto C=Camera->GetCameraComponent();C->PostProcessSettings.AutoExposureMinBrightness=10;C->PostProcessSettings.AutoExposureMaxBrightness=10;
             for(TActorIterator<ADirectionalLight> It(W);It;++It){Sun=It->GetLightComponent()->Intensity;It->GetLightComponent()->SetIntensity(.03f);}
             for(TActorIterator<ASkyLight> It(W);It;++It){Sky=It->GetLightComponent()->Intensity;It->GetLightComponent()->SetIntensity(.004f);}Stage=9;}
         if(Stage==9&&T>16){Shot(TEXT("Glow-Dark"));Stage=10;}
         if(Stage==10&&T>18){B->ServerColor_Implementation(6);Stage=11;}
-        if(Stage==11&&T>20){auto M=Filament(B);auto Tint=M?M->K2_GetVectorParameterValue(TEXT("GlowColor")):FLinearColor::Black;Neon=M&&M->K2_GetScalarParameterValue(TEXT("Glow"))==1&&Tint.R>.9&&Tint.G>.7&&Tint.B<.05&&B->FilamentName()==TEXT("Neon Gelb");Shot(TEXT("NeonGelb-Dark"));Stage=12;}
+        if(Stage==11&&T>20){auto M=Filament(B);auto Tint=M?M->K2_GetVectorParameterValue(TEXT("GlowColor")):FLinearColor::Black;Neon=M&&M->K2_GetScalarParameterValue(TEXT("Glow"))==1&&Tint.R>.9&&Tint.G>.7&&Tint.B<.05&&B->FilamentName()==TEXT("Neonbanane");Shot(TEXT("Neonbanane-Dark"));Stage=12;}
         if(Stage==12&&T>21){for(TActorIterator<ADirectionalLight> It(W);It;++It)It->GetLightComponent()->SetIntensity(Sun);for(TActorIterator<ASkyLight> It(W);It;++It)It->GetLightComponent()->SetIntensity(Sky);auto C=Camera->GetCameraComponent();C->PostProcessSettings.AutoExposureMinBrightness=12;C->PostProcessSettings.AutoExposureMaxBrightness=12;Stage=13;}
-        if(Stage==13&&T>23){Shot(TEXT("NeonGelb-Day"));Stage=14;}
-        if(Stage==14&&T>24){B->ServerColor_Implementation(999);Neon&=B->ColorIndex==6;Report(TEXT("Filaments"),Printed&&Galaxy&&Glow&&Neon,FString::Printf(TEXT("\"printed_layers_enabled\":%s,\"prusament_galaxy_enabled\":%s,\"glow_filament_enabled\":%s,\"neon_yellow_glow_enabled\":%s,\"color_count\":7"),Printed?TEXT("true"):TEXT("false"),Galaxy?TEXT("true"):TEXT("false"),Glow?TEXT("true"):TEXT("false"),Neon?TEXT("true"):TEXT("false")));FPlatformMisc::RequestExit(false);}
+        if(Stage==13&&T>23){Shot(TEXT("Neonbanane-Day"));Stage=14;}
+        if(Stage==14&&T>24){B->ServerColor_Implementation(999);Neon&=B->ColorIndex==6;Report(TEXT("Filaments"),Printed&&Galaxy&&Glow&&Neon,FString::Printf(TEXT("\"printed_layers_enabled\":%s,\"galaxy_filament_enabled\":%s,\"glow_filament_enabled\":%s,\"neon_yellow_glow_enabled\":%s,\"color_count\":7"),Printed?TEXT("true"):TEXT("false"),Galaxy?TEXT("true"):TEXT("false"),Glow?TEXT("true"):TEXT("false"),Neon?TEXT("true"):TEXT("false")));FPlatformMisc::RequestExit(false);}
     }
     if(Flag(TEXT("BenchyNozzleNetworkAudit"))){
         static int Stage=0;static ABenchyPawn* Front=nullptr;static ABenchyPawn* Rear=nullptr;static bool Forward=false;

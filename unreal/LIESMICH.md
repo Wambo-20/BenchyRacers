@@ -1,27 +1,45 @@
-# Benchy Racers 1.6.1 – Testversion
+# Benchy Racers 1.6.3
 
-Starte BenchyRacers.exe nach dem Entpacken des kompletten ZIPs, oder nutze
-das Setup. Unreal Engine muss nicht installiert sein.
+## Installieren und aktualisieren
 
-Wähle dein Filament und öffne den Logo-Editor. Lade dein PNG, passe Fläche,
-Position, Größe, Drehung und Kontur an und wähle „Speichern & zurück“.
-Das Benchy ist groß im Editor sichtbar. Bis zu acht PNG-Ebenen lassen sich
-einzeln auswählen, duplizieren, ausblenden, löschen und umsortieren. Jede
-Ebene kann links, rechts, auf dem Deck, am Heck oder auf beiden Seiten sitzen.
-Ein bisheriges Logo wird als erste Ebene übernommen.
-Dein Design bleibt gespeichert und wird mit in die Lobby genommen.
+Neuer Einstiegspunkt mit eigenen Filamentnamen. Den Installer ausfuehren
+und danach die bisherige Verknuepfung „Benchy Racers Unreal Test“ starten.
+Der Installationsordner bleibt fuer bestehende Spieler derselbe.
 
-Erstelle eine Online-Lobby und kopiere den achtstelligen Code links im Menü.
-Deine Freunde geben ihn unter „Mit Freunden verbinden“ ein. Alle brauchen
-diese Testversion. Die Benchys und Logos der anderen werden live angezeigt;
-oben neben dem Menü gibt es den Lobby-Chat. Der Gastgeber startet das Rennen.
-Wer während eines Rennens beitritt, wartet auf das nächste Rennen.
+Ab Version 1.6.2 koennen Updates direkt im linken Hauptmenue gestartet
+werden. Fuer die Version 1.6.1 kann der kleine BenchyRacers-Updater.exe
+einmal separat gestartet werden. Der Updater laedt nur das passende
+Teilupdate, prueft die Dateien, ersetzt sie bei geschlossenem Spiel und
+startet das Spiel wieder. Logos und Einstellungen bleiben erhalten.
 
-Die Version enthält EOS-Verbindungen mit automatischem Relay bei Bedarf.
-Geräteanmeldung, Lobby-Erstellung und der EOS-Host wurden geprüft. Chat und
-Logo-Übertragung wurden mit zwei lokalen Spielinstanzen geprüft. Die komplette
-Relay-Verbindung zwischen zwei verschiedenen PCs ist noch zu bestätigen.
-Ein Test mit dem Freund auf seinem PC ist deshalb noch erforderlich.
+## Filamente
 
-Dieser Installer legt „Benchy Racers Unreal Test“ getrennt von Version 1.5.1
-an. Die veröffentlichte GitHub-Version 1.5.1 bleibt verfügbar.
+- Rabenschwarz Matt
+- Mandarinenrausch
+- Lagunenblau
+- Honiggold
+- Sternenstaub Schwarz: funkelnd
+- Gluehwuermchengruen: gruene Eigenleuchtfarbe
+- Neonbanane: gelbe Eigenleuchtfarbe
+
+Farben und Effekte sind unveraendert. Gespeicherte Farbauswahlen werden
+weiterverwendet. Die Namen sind fiktiv und stellen keine Hersteller-
+Kooperation dar.
+
+## Online und Anforderungen
+
+Host und Mitspieler brauchen Version 1.6.3. Windows 64 Bit und DirectX 12.
+Unreal Engine und Epic Games Launcher sind zum Spielen nicht erforderlich.
+Der Installer enthaelt die eingeschraenkte EOS-Spielclientkonfiguration
+fuer Lobby-Funktionen mit angemeldetem Spielnutzer. Der persoenliche
+Epic-Kontozugang ist nicht enthalten. Beim Schliessen des Hosts endet die Lobby.
+
+Der Online-Bewegungsfix aus 1.6.2 ist enthalten. Eine Pruefung am
+Internetanschluss des Freundes steht weiterhin aus. Mac ist noch kein
+fertiger Spieldownload.
+
+## Credits
+
+Original #3DBenchy: Daniel Noree / Creative Tools, CC0 1.0.
+https://www.3dbenchy.com/license/
+Eigenstaendiges Spiel ohne behauptete offizielle Unterstuetzung.

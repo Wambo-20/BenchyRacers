@@ -45,7 +45,7 @@ using FContext=TWeakObjectPtr<UBenchyOnline>;
 FContext* Context(UBenchyOnline* O){return new FContext(O);}
 UBenchyOnline* Resolve(void* Data){TUniquePtr<FContext> C(static_cast<FContext*>(Data));return C->Get();}
 UBenchyInstance* Instance(UBenchyOnline* O){return Cast<UBenchyInstance>(O->GetOuter());}
-const char* Bucket="BenchyRacers-1.6.2";
+const char* Bucket="BenchyRacers-1.6.3";
 }
 UBenchyOnline::UBenchyOnline(){}
 UBenchyOnline::~UBenchyOnline(){}

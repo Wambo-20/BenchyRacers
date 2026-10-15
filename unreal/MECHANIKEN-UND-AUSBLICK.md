@@ -12,8 +12,8 @@
 
 ## Filamentdarstellung – Version 1.4.1
 
-- Prusament Galaxy Black: wenige kleine, selbstleuchtende Sterne in Weißblau, Violett und warmem Gold. Unabhängiges Funkeln und wechselnde Lichtreflexe bei Drehung des Bootes; keine dichte graue Metallfleckenschicht.
-- Prusament Glow in the Dark: helles Grün im Tageslicht, grüne Eigenleuchtfarbe im Dunkeln.
+- Sternenstaub Schwarz: wenige kleine, selbstleuchtende Sterne in Weißblau, Violett und warmem Gold. Unabhängiges Funkeln und wechselnde Lichtreflexe bei Drehung des Bootes; keine dichte graue Metallfleckenschicht.
+- Glühwürmchengrün: helles Grün im Tageslicht, grüne Eigenleuchtfarbe im Dunkeln.
 - Objektfeste FDM-Druckschichten mit feineren Rillen auf den Deckflächen. Muster bewegen sich mit dem Boot.
 - Volle Renderauflösung, abgeschaltete Tiefenunschärfe und kein Kamerabewegungsblur; leichte Schärfung.
 

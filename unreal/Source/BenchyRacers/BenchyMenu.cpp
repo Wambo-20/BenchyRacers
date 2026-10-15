@@ -221,12 +221,12 @@ void ABenchyController::SelectTrack(int32 Track){
 void UBenchyInstance::CheckForUpdate(){
 #if PLATFORM_WINDOWS
     if(UpdateChecking||GIsEditor)return;UpdateChecking=true;UpdateNotice=TEXT("Suche nach Updates ...");
-    auto Request=FHttpModule::Get().CreateRequest();Request->SetURL(TEXT("https://github.com/Wambo-20/BenchyRacers/releases/latest/download/UpdateManifest.json"));Request->SetVerb(TEXT("GET"));Request->SetTimeout(20);Request->SetHeader(TEXT("User-Agent"),TEXT("BenchyRacers/1.6.2"));
+    auto Request=FHttpModule::Get().CreateRequest();Request->SetURL(TEXT("https://github.com/Wambo-20/BenchyRacers/releases/latest/download/UpdateManifest.json"));Request->SetVerb(TEXT("GET"));Request->SetTimeout(20);Request->SetHeader(TEXT("User-Agent"),TEXT("BenchyRacers/1.6.3"));
     Request->OnProcessRequestComplete().BindWeakLambda(this,[this](FHttpRequestPtr,FHttpResponsePtr Response,bool Ok){UpdateChecking=false;TSharedPtr<FJsonObject> Data;FString Version;double Schema=0;
         if(!Ok||!Response.IsValid()||Response->GetResponseCode()!=200||Response->GetContentLength()>1048576||!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Response->GetContentAsString()),Data)||!Data.IsValid()||!Data->TryGetStringField(TEXT("version"),Version)||!Data->TryGetNumberField(TEXT("schema"),Schema)||Schema!=1){UpdateNotice=TEXT("Update-Pruefung momentan nicht erreichbar. Du kannst weiter spielen.");return;}
         TArray<FString> Parts;Version.ParseIntoArray(Parts,TEXT("."));if(Parts.Num()!=3){UpdateNotice=TEXT("Unbekanntes Update-Format.");return;}for(const auto& Part:Parts)if(!Part.IsNumeric()||Part.Len()>5){UpdateNotice=TEXT("Unbekanntes Update-Format.");return;}
         const int64 Remote=FCString::Atoi64(*Parts[0])*10000000000LL+FCString::Atoi64(*Parts[1])*100000LL+FCString::Atoi64(*Parts[2]);
-        if(Remote>10000600002LL){UpdateVersion=Version;UpdateNotice=TEXT("Update verfuegbar: ")+Version;}else{UpdateVersion.Reset();UpdateNotice=TEXT("Version 1.6.2 ist aktuell.");}
+        if(Remote>10000600003LL){UpdateVersion=Version;UpdateNotice=TEXT("Update verfuegbar: ")+Version;}else{UpdateVersion.Reset();UpdateNotice=TEXT("Version 1.6.3 ist aktuell.");}
     });if(!Request->ProcessRequest()){UpdateChecking=false;UpdateNotice=TEXT("Update-Pruefung momentan nicht erreichbar.");}
 #endif
 }

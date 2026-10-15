@@ -1,48 +1,42 @@
 # Benchy Racers
 
-Installierbares 3D-Wasser-Rennspiel für Windows mit dem originalen #3DBenchy. Aktuelles Update: **1.6.2 – Online-Bewegung und Ingame-Updater**.
+Ein installierbares 3D-Wasser-Rennspiel mit dem originalen #3DBenchy. Aktueller Ausgangspunkt: **Version 1.6.3**.
 
-## Download und Update
+## Download
 
-[Windows-Installer 1.6.2](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.2/BenchyRacers-1.6.2-Setup.exe).
+[Vollständiger Windows-Installer 1.6.3](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.3/BenchyRacers-1.6.3-Setup.exe) · [Release und Prüfsummen](https://github.com/Wambo-20/BenchyRacers/releases/tag/v1.6.3)
 
-Bereits Version 1.6.1 installiert? [Kleinen Updater herunterladen](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.2/BenchyRacers-Updater.exe) und bei geschlossenem Spiel starten: Das Teilupdate braucht etwa **126 MB**, der ganze Installer etwa 1,21 GB. Portable-Spieler waehlen ihren Spielordner.
+Windows 64 Bit und DirectX 12. Unreal Engine und Epic Games Launcher werden zum Spielen nicht benötigt. Die bestehende Verknüpfung „Benchy Racers Unreal Test“ startet die aktuelle Installation.
 
-Ab 1.6.2 prueft das Spiel im linken Hauptmenue auf Updates. „Jetzt aktualisieren“ beendet das Spiel, installiert das Teilupdate mit geprueften Dateien und startet es wieder. Logos und Einstellungen bleiben erhalten. Fuer deutlich aeltere oder veraenderte Installationen den vollen Installer verwenden. Alle Mitspieler brauchen die gleiche Version.
-
-[Release-Details und Pruefsummen](https://github.com/Wambo-20/BenchyRacers/releases/tag/v1.6.2). Windows 64 Bit und DirectX 12. Unreal Engine und Epic Games Launcher sind zum Spielen nicht erforderlich. Gestartet wird weiterhin die Installation „Benchy Racers Unreal Test“; die aeltere separate Installation bleibt bestehen.
+Ab Version 1.6.2 lassen sich Updates direkt im linken Hauptmenü starten. Für Version 1.6.1 einmal den [kleinen Updater](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.3/BenchyRacers-Updater.exe) bei geschlossenem Spiel ausführen. Die Teilupdates kommen aus dem aktuellen Release und brauchen keine alten Release-Downloads. Persönliche Designs und Einstellungen bleiben erhalten. Für ältere oder veränderte Installationen den vollständigen Installer verwenden.
 
 ## Im Spiel
 
-- Drei Welten: Sonnendeck, Kupferhafen und Frostfjord, mit Flüssen, Kanälen, Felsen und Vegetation.
-- Einzelrennen und private Rennen mit bis zu acht Menschen.
-- Sieben Filamente mit Druckschichten, funkelndem Galaxy und leuchtendem Glow in the Dark sowie Neon Gelb.
-- Standard Nozzle, Lenknozzle, Turbo, Schild, Makercoins und Boost.
-- Große Bootsvorschau im Logo-Editor und bis zu acht unabhängig bearbeitbare PNG-Ebenen: Seiten, Deck und Heck, eigene Konturen und gespeicherte Designs.
-- Lobby-Chat und Live-Benchys mit Fahrernamen und übertragenen Logos. Späte Teilnehmer warten auf das nächste Rennen.
-- Zieleinlauf mit automatischer Weiterfahrt und Live-Ergebnissen, Druckanimation, Grafikoptionen und Musik.
+- Drei Welten: Sonnendeck, Kupferhafen und Frostfjord, mit Flüssen, Kanälen und Vegetation.
+- Einzelrennen und Online-Lobbys mit bis zu acht Menschen, Chat und Live-Bootsvorschauen.
+- Sieben eigene Filamentnamen: Rabenschwarz Matt, Mandarinenrausch, Lagunenblau, Honiggold, Sternenstaub Schwarz, Glühwürmchengrün und Neonbanane.
+- Druckschichten, funkelnder Sternenstaub und zwei Leuchtfilamente.
+- Standard Nozzle, Lenknozzle, Turbo, Schild und Makercoins.
+- Bis zu acht unabhängige PNG-Logo-Ebenen mit Position, Größe, Drehung und Konturen.
+- Druckanimation, Grafikoptionen, Musik und Live-Ergebnisse mit automatischer Weiterfahrt nach dem Ziel.
 
-## Mit Freunden spielen
+Die Filamentnamen sind fiktiv. Dieses eigenständige Community-Spiel behauptet keine offizielle Unterstützung durch die Urheber des Bootsmodells.
 
-Alle brauchen Version 1.6.2. Der Gastgeber erstellt eine Online-Lobby und schickt den achtstelligen Code links im Menü. Freunde geben ihn unter „Mit Freunden verbinden“ ein. Diese Testausgabe integriert Epic Online Services für P2P-/Relay-Verbindungen ohne manuelle Routerfreigabe. Geräteanmeldung, Lobby-Erstellung und Host-Transport sind geprüft; eine vollständige Verbindung zwischen zwei verschiedenen PCs ist **noch nicht bestätigt**. Chat und Logo-Übertragung sind mit zwei lokalen Spielinstanzen geprüft. Beim Beenden des Gastgebers endet die Sitzung.
+## Gemeinsam spielen
 
-## Quellcode
+Alle Mitspieler und der Host brauchen Version 1.6.3. Der Host erstellt eine Online-Lobby und teilt den achtstelligen Code links im Menü. Freunde geben den Code unter „Mit Freunden verbinden“ ein. Beim Beenden des Hosts endet die Sitzung; eine automatische Host-Übernahme ist noch nicht enthalten.
 
-Der aktuelle Spielcode, die Konfiguration ohne private EOS-Zugangsdaten und die Werkzeuge liegen unter [unreal](unreal). Das Quellcodearchiv dieses Releases enthält Code, Konfiguration und Werkzeuge. Zusätzliche eigene Assets sind im Projektarchiv von Release 1.6.1 enthalten. Separat lizenzierte Fab-/Electric-Dreams-Originalassets sind ausgeschlossen und müssen zum Bearbeiten aus der eigenen Bibliothek bereitgestellt werden. Entwicklung mit Unreal Engine 5.8.3. Die fertigen Windows-Downloads enthalten die benötigten Laufzeitassets.
+Der Online-Bewegungsfix wurde lokal mit künstlicher Verzögerung, Schwankungen und Paketverlust geprüft. Der Test am Internetanschluss des Freundes steht weiterhin aus. Die Windows-Version ist spielbar; ein fertiger Mac-Spieldownload ist noch nicht enthalten.
 
-Die ältere Godot-Ausgabe bleibt unter `work/game` und in den bisherigen Releases erhalten.
+## Projekt
 
-## Geplant
+[Spielcode und Werkzeuge](unreal) · [Projektarchiv](https://github.com/Wambo-20/BenchyRacers/releases/download/v1.6.3/BenchyRacers-1.6.3-Projekt.zip)
 
-Mehr Filamente und Hersteller, direkteres Platzieren der Logos mit der Maus sowie weitere Lobby-/Internetverbesserungen. Freies Bemalen ist derzeit nicht vorgesehen. Drag-and-drop aufs Boot ist noch nicht enthalten.
+Entwicklung mit Unreal Engine 5.8.3. Das Projektarchiv enthält den passenden Code sowie eigene und CC0-Assets. Separat lizenzierte Fab-/Electric-Dreams-Originalassets müssen aus der eigenen Bibliothek bereitgestellt werden. Private EOS-Konfiguration wird nicht im öffentlichen Quellcode oder Projektarchiv veröffentlicht. Der freigegebene Installer enthält die benötigte eingeschränkte Spielclient-Konfiguration.
+
+Geplant sind weitere Fantasie-Filamente und Effekte sowie Verbesserungen an Lobby und Online-Rennen.
 
 ## Credits
 
-- Original #3DBenchy: Daniel Norée / Creative Tools, [CC0](https://www.3dbenchy.com/license/).
-- Naturmodelle und Texturen: [Poly Haven](https://polyhaven.com), CC0; Einzelquellen stehen im Projektarchiv.
-- Electric Dreams: Epic Games / Quixel, Unreal-only. Fab-Inhalte sind gemäß ihren jeweiligen Lizenzen im fertigen Spiel eingebunden; keine Weitergabe als eigenständige Asset-Sammlung.
-- Filamentnamen sind Marken ihrer Hersteller; kein offizielles Markenprodukt.
-- Die ältere Godot-Ausgabe enthält ihre Lizenzhinweise unter `docs`.
-
-Für den eigenen Spielcode wurde bisher keine separate Open-Source-Lizenz festgelegt. Die Drittanbieterlizenzen gelten unabhängig davon.
-
+- Original #3DBenchy: Daniel Norée / Creative Tools, [CC0 1.0](https://www.3dbenchy.com/license/).
+- Weitere Credits und Lizenzhinweise liegen im Projektarchiv. Lizenzpflichtige Originalassets werden nicht als offene Quelldateien weitergegeben.

@@ -1,29 +1,41 @@
-## Online-Fix und Updates im Spiel
+## Neuer Ausgangspunkt: eigene Filamentnamen
 
-- Online-Bewegung geglaettet: Position, Drehung, Geschwindigkeit und Zeitstempel werden gemeinsam uebertragen. Andere Benchys fahren auf einer kurz gepufferten Zeitleiste; kurze Paketluecken werden begrenzt ueberbrueckt.
-- Steuerdaten werden mit 30 statt 20 Meldungen pro Sekunde uebertragen. Ruecksetzen und Rennstart springen direkt zur richtigen Position.
-- Windows-Hauptmenue mit Update-Pruefung und „Jetzt aktualisieren (Spiel wird beendet)“. Der Helfer laedt nur das vorbereitete Teilupdate, prueft die Dateien und startet das Spiel wieder.
-- Logos, Einstellungen und die bestehende Online-Konfiguration bleiben beim Teilupdate erhalten. Bei einem Installationsfehler wird die vorherige Dateiversion wiederhergestellt.
+Die sieben Filamente heißen jetzt:
 
-## Von 1.6.1 aktualisieren: nur etwa 126 MB
+- Rabenschwarz Matt
+- Mandarinenrausch
+- Lagunenblau
+- Honiggold
+- Sternenstaub Schwarz
+- Glühwürmchengrün
+- Neonbanane
 
-**BenchyRacers-Updater.exe** herunterladen und bei geschlossenem Spiel ausfuehren. Die Installation „Benchy Racers Unreal Test“ wird erkannt; bei einer Portable-Ausgabe den Spielordner waehlen. Der Updater laedt das Teilupdate selbst herunter. Die Update-ZIP und UpdateManifest.json muessen nicht manuell entpackt oder kopiert werden.
+Farben, Druckschichten, Glitzer und Leuchteffekte bleiben erhalten. Gespeicherte Auswahlen werden übernommen. Die Filamentnamen sind fiktiv und stellen keine Herstellerkooperation dar.
 
-**Ab 1.6.2** lassen sich spaetere Updates direkt im linken Hauptmenue starten. Ein Klick beendet das Spiel und startet den eingebauten Helfer. Als Gastgeber vorher die Lobby schliessen. Fuer deutlich aeltere oder veraenderte Installationen steht der volle **BenchyRacers-1.6.2-Setup.exe** bereit. Der Installer aktualisiert weiterhin den Ordner der bisherigen Testausgabe; die aeltere separate Installation bleibt erhalten.
+## Spielen und aktualisieren
 
-Alle Mitspieler und der Gastgeber brauchen **1.6.2**. Windows 64 Bit und DirectX 12; Unreal Engine und Epic Games Launcher sind zum Spielen nicht notwendig. Die bisherigen Welten, Filamente, Logo-Ebenen, Chat und Items bleiben enthalten.
+**Neuinstallation:** `BenchyRacers-1.6.3-Setup.exe` herunterladen und ausführen. Der Installer ist vollständig; ältere Releases sind dafür nicht erforderlich. Gestartet wird weiterhin über die bestehende Verknüpfung „Benchy Racers Unreal Test“. Windows 64 Bit und DirectX 12; Unreal Engine und Epic Games Launcher werden zum Spielen nicht benötigt.
 
-## Geprueft
+**Schon 1.6.2 installiert:** Im linken Hauptmenü „Jetzt aktualisieren“ wählen. Das Spiel beendet sich, installiert das Teilupdate und startet wieder.
 
-Bewegungsberechnung mit unregelmaessigen Meldungen, Paketluecken, Drehung und Respawn. Zwei lokale Spielinstanzen mit 100 ms kuenstlicher Paketverzoegerung, Schwankungen bis 40 ms und 3 % Paketverlust: Chat und Logo-Uebertragung sowie spaeter Beitritt. Updater: korrekte Dateipruefung, Ablehnung beschaedigter Downloads und einer falschen Ausgangsversion, Schutz persoenlicher Dateien, Ruecknahme nach einem simulierten Installationsfehler. Installer-Inhalt und Teilupdate sind anhand ihrer Pruefsummen geprueft.
+**Noch 1.6.1 installiert:** Einmal den kleinen `BenchyRacers-Updater.exe` herunterladen und bei geschlossenem Spiel ausführen. Die bisherige Installation wird erkannt; Portable-Spieler wählen ihren Spielordner. Für ältere oder veränderte Installationen bitte den vollständigen Installer verwenden.
 
-Der Fix muss noch gemeinsam am Internetanschluss des Freundes ausprobiert werden. Die lokale Pruefung ersetzt diesen Test nicht. Mac ist in diesem Release noch kein fertiger Spieldownload.
+Die Teilupdates für 1.6.1 und 1.6.2 werden vollständig aus diesem Release geladen und brauchen keine Downloads aus früheren Releases. Logos, Einstellungen und vorhandene Online-Konfiguration bleiben erhalten. Update-ZIP und UpdateManifest.json müssen nicht manuell kopiert werden.
 
-## Geplant
+## Enthalten und geprüft
 
-Mehr Filamente, Hersteller und besondere Farben, weitere Verbesserungen an Online-Verbindungen und der Lobby. Der Updater ist fuer weitere vorbereitete Teilupdates vorgesehen; bei grossen neuen Weltdaten kann der Download entsprechend groesser sein.
+Drei Welten, Online-Lobbys, Chat, Logo-Ebenen, Items und Makercoins. Der Online-Bewegungsfix und der Ingame-Updater sind enthalten. Alle Mitspieler und der Gastgeber brauchen **1.6.3**.
 
-Der Quellcode dieses Releases und der Updater liegen im Repository. Private EOS-Konfiguration und separat lizenzierte Fab-Originalassets werden nicht als Quellcode veroeffentlicht. Aeltere Releases bleiben verfuegbar.
+Natives Windows-Spiel und vollständiger Installer gebaut. Druckschichten, Sternenstaub-Glitzer und beide Leuchtfilamente im Spiel geprüft. Beide Teilupdate-Wege mit den echten Ausgangsdateien geprüft: sämtliche Zieldateien stimmen mit den Prüfsummen überein, persönliche Testdateien bleiben erhalten. Der Updater aus der Vorversion wurde bereits mit echtem GitHub-Download geprüft.
 
+Der Online-Bewegungsfix ist mit künstlicher Verzögerung und Paketverlust lokal geprüft; der gemeinsame Test am Internetanschluss des Freundes steht noch aus. Ein fertiger Mac-Spieldownload ist noch nicht enthalten.
 
-Updater bauen: .NET Framework C# Compiler; Referenzen System.Web.Extensions, System.IO.Compression, System.IO.Compression.FileSystem, System.Windows.Forms. Manifest schema 1 mit zielversion und patches je Ausgangsversion. Aufwaertsupdate laedt SHA256-gepruefte Dateipakete; keine binaeren Differenzen innerhalb einer Datei. Nur geaenderte Dateien werden gepackt.
+## Projekt und Ausblick
+
+Das Projektarchiv enthält den passenden Quellcode und eigene beziehungsweise CC0-Assets. Separat lizenzierte Fab-/Electric-Dreams-Originalassets sowie private EOS-Konfiguration sind im Projektarchiv ausgeschlossen. Die benötigten Laufzeitassets und der eingeschränkte EOS-Spielclient-Zugang sind im freigegebenen Installer enthalten.
+
+Geplant: weitere Fantasie-Filamente und Effekte sowie Verbesserungen an Lobby und Online-Rennen.
+
+Original #3DBenchy: Daniel Norée / Creative Tools, CC0 1.0 – https://www.3dbenchy.com/license/ . Eigenständiges Community-Spiel ohne behauptete offizielle Unterstützung durch die Urheber des Modells.
+
+Updater: .NET Framework C# mit System.Web.Extensions, System.IO.Compression, System.IO.Compression.FileSystem und System.Windows.Forms. Manifest schema 1. Jede Ausgangsversion hat ihre eigene fromVersion aus BuildStatus.json und alte Dateiprüfsummen; mehrere Ausgangsversionen können dasselbe ZIP mit unterschiedlichen alten Prüfsummen verwenden. Paket-URLs müssen auf die aktuelle Release-Version zeigen.
